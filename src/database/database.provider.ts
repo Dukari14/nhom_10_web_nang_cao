@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { User } from "../user/user.entity";
+import { Products } from "../products/products.entity";
 import { DataSource } from 'typeorm';
 
 export const databaseProviders = [
@@ -13,7 +14,7 @@ export const databaseProviders = [
         username: process.env.DB_USERNAME ?? 'root',
         password: process.env.DB_PASSWORD ?? '',
         database: process.env.DB_NAME ?? 'BanHang',
-        entities: [User],
+        entities: [User, Products],
         synchronize: true,
       });
 
