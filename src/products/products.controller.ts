@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param, ParseIntPipe } from '@nestj
 import { ProductsService } from './products.service';
 import { Products } from './products.entity';
 
-@Controller()
+@Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

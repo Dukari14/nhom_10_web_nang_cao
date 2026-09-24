@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param, ParseIntPipe } from '@nestj
 import { UserService } from './user.service';
 import { User } from './user.entity';
 
-@Controller()
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

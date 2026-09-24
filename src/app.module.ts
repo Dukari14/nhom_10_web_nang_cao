@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+/*import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,5 +17,14 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
   ],
   controllers: [AppController],
   providers: [AppService],
+})
+export class AppModule {}*/
+
+import { Module } from '@nestjs/common';
+import { UserModule } from './user/user.module';
+import { ProductsModule } from './products/products.module';
+
+@Module({
+  imports: [UserModule, ProductsModule],
 })
 export class AppModule {}
