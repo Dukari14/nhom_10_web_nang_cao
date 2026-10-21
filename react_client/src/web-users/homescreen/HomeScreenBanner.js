@@ -23,19 +23,21 @@ const slides = [
 export default function HomeScreenBanner() {
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    // Hàm để chuyển sang slide trước
     const prevSlide = () => {
         setCurrentIndex((prevIndex) => 
             prevIndex === 0 ? slides.length - 1 : prevIndex - 1
         );
     };
 
+    // Hàm để chuyển sang slide tiếp theo
     const nextSlide = () => {
         setCurrentIndex((prevIndex) => 
             prevIndex === slides.length - 1 ? 0 : prevIndex + 1
         );
     };
 
-    // Tự động chuyển slide sau mỗi 8 giây
+    // Hàm tự động chuyển slide sau mỗi 8 giây
     useEffect(() => {
         const timer = setInterval(() => {
             nextSlide();

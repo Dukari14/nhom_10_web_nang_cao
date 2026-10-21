@@ -16,21 +16,26 @@ const FALLBACK_PRODUCTS = [
     { product_id: 8, name: 'Xiaomi 14 Pro', slug: 'xiaomi-14-pro', price: 19990000, sale_price: 17490000, stock: 3, image_url: null, created_at: new Date().toISOString() },
 ];
 
+// Biến xác định thời gian sản phẩm được coi là mới
 const NEW_WITHIN_DAYS = 14;
 
+// Chuyển format số sang định dạng tiền tệ Việt Nam
 const formatPrice = (value) =>
     new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 
+// Tính phần trăm giảm giá từ giá gốc và giá bán khi giảm giá
 const getDiscountPercent = (price, salePrice) => {
     if (!salePrice || Number(salePrice) >= Number(price)) return 0;
     return Math.round((1 - Number(salePrice) / Number(price)) * 100);
 };
 
+// Kiểm tra sản phẩm có phải là mới hay không dựa trên ngày tạo
 const isNewProduct = (createdAt) => {
     const days = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24);
     return days <= NEW_WITHIN_DAYS;
 };
 
+// Hàm để hiện thẻ sản phẩm, bao gồm cả trạng thái hết hàng, giảm giá, và mới
 function ProductCard({ product }) {
     const { name, slug, price, sale_price, stock, image_url, created_at } = product;
     const discount = getDiscountPercent(price, sale_price);
@@ -78,6 +83,7 @@ function ProductCard({ product }) {
     );
 }
 
+// Hàm hiển thị thẻ sản phẩm dạng skeleton khi đang tải dữ liệu
 function ProductSkeleton() {
     return (
         <div className="product-card product-card--skeleton" aria-hidden="true">
