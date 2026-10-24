@@ -34,6 +34,9 @@ import {
   UpdateUserDto,
 } from './dto/admin-users.dto';
 import { StatsQueryDto, StatsResponseDto } from './dto/admin-stats.dto';
+import { ProductsService, ProductListResult } from '../products/products.service';
+import { ListProductsQueryDto } from '../products/dto/list-products-query.dto';
+import { ProductListResponseDto } from '../products/dto/product-response.dto';
 
 // Mô tả chung cho Swagger: các route admin đều cần cookie đăng nhập và quyền admin
 const AdminAuthDocs = () =>
@@ -110,6 +113,28 @@ export class AdminUsersController {
     @Body() dto: UpdateUserDto,
   ): Promise<AdminUserResponseDto> {
     return this.adminUsersService.update(adminId, id, dto);
+  }
+}
+
+@ApiTags('Admin - Products')
+@AdminAuthDocs()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
+@Controller('admin/products')
+export class AdminProductsController {
+  constructor(private readonly productsService: ProductsService) {}
+
+  // GET /api/admin/products
+  @Get()
+  @ApiOperation({
+    summary: 'Danh sách sản phẩm cho admin',
+    description:
+      'Giống GET /api/products nhưng gồm cả sản phẩm đang ẩn (is_active = false) và kèm danh mục, để admin sửa hoặc bật bán lại.',
+  })
+  @ApiOkResponse({ type: ProductListResponseDto })
+  @ApiBadRequestResponse({ description: 'Tham số không hợp lệ' })
+  findAll(@Query() query: ListProductsQueryDto): Promise<ProductListResult> {
+    return this.productsService.findAll(query, true);
   }
 }
 

@@ -56,3 +56,20 @@ export const DEMO_BANK_ACCOUNT = {
     number: '0123 456 789',
     owner: 'CONG TY PHONESHOP',
 };
+
+// Các bước chuyển trạng thái đơn hàng hợp lệ (giống quy tắc của backend):
+// không đi lùi, không bỏ bước, hủy được khi chưa giao
+export const ORDER_TRANSITIONS = {
+    pending: ['confirmed', 'cancelled'],
+    confirmed: ['shipping', 'cancelled'],
+    shipping: ['delivered'],
+    delivered: [],
+    cancelled: [],
+};
+
+export const ROLE_LABELS = {
+    admin: 'Quản trị viên',
+    customer: 'Khách hàng',
+};
+
+export const ADMIN_PAGE_SIZE = 10;

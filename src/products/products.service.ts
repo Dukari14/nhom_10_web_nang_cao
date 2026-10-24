@@ -57,8 +57,8 @@ export class ProductsService {
     });
   }
 
-  // 2. Tìm kiếm, lọc và phân trang
-  async findAll(query: ListProductsQueryDto): Promise<ProductListResult> {
+  // 2. Tìm kiếm, lọc và phân trang. Admin (includeInactive) thấy cả sản phẩm đang ẩn, kèm danh mục.
+  async findAll(query: ListProductsQueryDto, includeInactive = false): Promise<ProductListResult> {
     const { search, brand, minPrice, maxPrice, storage, color } = query;
     const page = query.page ?? 1;
     const limit = query.limit ?? DEFAULT_PAGE_SIZE;
@@ -68,9 +68,12 @@ export class ProductsService {
     }
 
     // Mọi giá trị từ người dùng đều đi qua tham số (:name), không nối chuỗi vào SQL
-    const qb = this.productRepository
-      .createQueryBuilder('p')
-      .where('p.is_active = :active', { active: true });
+    const qb = this.productRepository.createQueryBuilder('p');
+    if (includeInactive) {
+      qb.leftJoinAndSelect('p.category', 'c').where('1 = 1');
+    } else {
+      qb.where('p.is_active = :active', { active: true });
+    }
 
     if (search) {
       qb.andWhere('(p.name LIKE :keyword OR p.brand LIKE :keyword)', {

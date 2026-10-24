@@ -2,9 +2,11 @@ import {
     ORDER_STATUS_LABELS,
     ORDER_STATUS_STEPS,
     ORDER_STATUS_VARIANTS,
+    ORDER_TRANSITIONS,
     PAYMENT_METHOD_LABELS,
     PAYMENT_STATUS_LABELS,
     PAYMENT_STATUS_VARIANTS,
+    ROLE_LABELS,
 } from './constants';
 
 describe('nhãn trạng thái', () => {
@@ -36,5 +38,25 @@ describe('nhãn trạng thái', () => {
             expect(PAYMENT_STATUS_VARIANTS[status]).toBeDefined();
         });
         expect(Object.keys(PAYMENT_METHOD_LABELS)).toEqual(['COD', 'BANK_TRANSFER']);
+    });
+});
+
+describe('chuyển trạng thái đơn hàng', () => {
+    test('chỉ đi tiến, hủy được khi chưa giao', () => {
+        expect(ORDER_TRANSITIONS.pending).toEqual(['confirmed', 'cancelled']);
+        expect(ORDER_TRANSITIONS.confirmed).toEqual(['shipping', 'cancelled']);
+        expect(ORDER_TRANSITIONS.shipping).toEqual(['delivered']);
+        expect(ORDER_TRANSITIONS.delivered).toEqual([]);
+        expect(ORDER_TRANSITIONS.cancelled).toEqual([]);
+    });
+
+    test('mọi trạng thái đích đều có nhãn tiếng Việt', () => {
+        Object.values(ORDER_TRANSITIONS)
+            .flat()
+            .forEach((status) => expect(ORDER_STATUS_LABELS[status]).toBeDefined());
+    });
+
+    test('nhãn vai trò', () => {
+        expect(ROLE_LABELS).toEqual({ admin: 'Quản trị viên', customer: 'Khách hàng' });
     });
 });

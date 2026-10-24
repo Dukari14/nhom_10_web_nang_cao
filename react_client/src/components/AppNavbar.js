@@ -57,6 +57,11 @@ export default function AppNavbar() {
                         )}
                     </Nav>
                     <Nav className="align-items-lg-center gap-2">
+                        {user && user.role === 'admin' && (
+                            <Nav.Link as={NavLink} to="/admin">
+                                Quản trị
+                            </Nav.Link>
+                        )}
                         {user && (
                             <Nav.Link as={NavLink} to="/orders">
                                 Đơn hàng

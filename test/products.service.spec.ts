@@ -57,6 +57,23 @@ describe('ProductsService', () => {
     });
   });
 
+  describe('findAll - dành cho admin', () => {
+    it('admin thấy cả sản phẩm đang ẩn và có kèm danh mục', async () => {
+      qb.leftJoinAndSelect = jest.fn().mockReturnValue(qb);
+
+      await service.findAll({ search: 'samsung' }, true);
+
+      expect(qb.leftJoinAndSelect).toHaveBeenCalledWith('p.category', 'c');
+      expect(qb.where).not.toHaveBeenCalledWith('p.is_active = :active', expect.anything());
+    });
+
+    it('khách chỉ thấy sản phẩm đang bán', async () => {
+      await service.findAll({});
+
+      expect(qb.where).toHaveBeenCalledWith('p.is_active = :active', { active: true });
+    });
+  });
+
   describe('findAll - lọc và phân trang', () => {
     it('lọc theo khoảng giá, dung lượng và màu sắc', async () => {
       await service.findAll({ minPrice: 5000000, maxPrice: 20000000, storage: '256GB', color: 'Đen' });

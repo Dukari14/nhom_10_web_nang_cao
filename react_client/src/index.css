@@ -280,3 +280,68 @@ body {
     border-color: #d6dbe0;
     border-radius: 8px;
 }
+
+/* Khu quản trị */
+.admin-sidebar {
+    background: var(--brand-dark);
+    color: #fff;
+}
+
+@media (min-width: 992px) {
+    .admin-sidebar {
+        width: 230px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+}
+
+.admin-sidebar .nav-link {
+    color: #fff;
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+
+.admin-sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-sidebar .nav-link.active {
+    background: var(--brand-accent);
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--brand-dark);
+}
+
+/* Biểu đồ cột doanh thu */
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 200px;
+    border-bottom: 2px solid #8a95a1;
+}
+
+.bar-chart-bar {
+    flex: 1 1 0;
+    min-width: 3px;
+    background: var(--brand-accent);
+    border-radius: 3px 3px 0 0;
+}
+
+.bar-chart-bar:hover {
+    background: var(--brand-dark);
+}
+
+.bar-chart-bar.is-empty {
+    background: #d6dbe0;
+}
+
+.bar-chart-scroll {
+    overflow-x: auto;
+}

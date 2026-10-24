@@ -119,6 +119,7 @@ Chỉ tài khoản có role `admin` mới gọi được. Quyền và trạng th
 | --- | --- | --- |
 | GET | `/api/admin/orders?status=&page=&limit=` | Đơn hàng của mọi khách, lọc theo trạng thái, phân trang |
 | PATCH | `/api/admin/orders/:id/status` | Đổi trạng thái đơn. Chỉ cho đi tiến: `pending` → `confirmed` → `shipping` → `delivered`; hủy được khi `pending` hoặc `confirmed` (hoàn lại tồn kho) |
+| GET | `/api/admin/products?search=&page=&limit=` | Danh sách sản phẩm cho admin, gồm cả sản phẩm đang ẩn, kèm danh mục |
 | GET | `/api/admin/users?search=&role=&is_active=&page=&limit=` | Danh sách tài khoản (không có mật khẩu) |
 | PATCH | `/api/admin/users/:id` | Khóa/mở khóa (`is_active`), đổi `role`. Admin không tự khóa mình được |
 | GET | `/api/admin/stats?from=&to=&groupBy=day` | Doanh thu (các đơn đã giao), số máy bán ra, doanh thu theo ngày hoặc tháng (`groupBy=day` hoặc `month`), top 5 bán chạy |
