@@ -1,5 +1,9 @@
 import {
     brandFromCategory,
+    formatDate,
+    formatDateTime,
+    getOrderItemName,
+    getOrderItemsSummary,
     formatPrice,
     getDisplayName,
     getInitial,
@@ -60,5 +64,40 @@ describe('tên và thông số sản phẩm', () => {
 
     test('lấy thương hiệu từ tên danh mục', () => {
         expect(brandFromCategory({ name: 'Điện thoại Samsung' })).toBe('Samsung');
+    });
+});
+
+describe('ngày giờ', () => {
+    test('định dạng ngày và giờ theo kiểu Việt Nam', () => {
+        const date = new Date(2026, 9, 4, 13, 5);
+        expect(formatDate(date)).toBe('04/10/2026');
+        expect(formatDateTime(date)).toBe('04/10/2026 13:05');
+    });
+
+    test('giá trị sai trả chuỗi rỗng', () => {
+        expect(formatDate('khong-phai-ngay')).toBe('');
+        expect(formatDateTime(null)).toBe('');
+    });
+});
+
+describe('dòng hàng trong đơn', () => {
+    const order = {
+        items: [
+            { product_brand: 'Samsung', product_name: 'Galaxy S24 256GB' },
+            { product_brand: 'Xiaomi', product_name: 'Xiaomi 14 256GB' },
+            { product_brand: null, product_name: 'Máy khác' },
+        ],
+    };
+
+    test('tên dòng hàng ghép hãng, không lặp hãng', () => {
+        expect(getOrderItemName(order.items[0])).toBe('Samsung Galaxy S24 256GB');
+        expect(getOrderItemName(order.items[1])).toBe('Xiaomi 14 256GB');
+        expect(getOrderItemName(order.items[2])).toBe('Máy khác');
+    });
+
+    test('tóm tắt đơn hàng', () => {
+        expect(getOrderItemsSummary({ items: [order.items[0]] })).toBe('Samsung Galaxy S24 256GB');
+        expect(getOrderItemsSummary(order)).toBe('Samsung Galaxy S24 256GB và 2 sản phẩm khác');
+        expect(getOrderItemsSummary({ items: [] })).toBe('');
     });
 });

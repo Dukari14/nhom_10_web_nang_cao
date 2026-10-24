@@ -7,6 +7,18 @@ export class CartProductDto {
   @ApiProperty({ example: 'Galaxy S24 256GB' })
   name: string;
 
+  @ApiProperty({ example: 'Samsung', nullable: true })
+  brand: string | null;
+
+  @ApiProperty({ example: '8GB', nullable: true })
+  ram: string | null;
+
+  @ApiProperty({ example: '256GB', nullable: true })
+  storage: string | null;
+
+  @ApiProperty({ example: 'Đen', nullable: true })
+  color: string | null;
+
   @ApiProperty({ example: 'galaxy-s24-256gb-den' })
   slug: string;
 

@@ -56,3 +56,39 @@ export function isNewProduct(product, days = 14) {
 export function brandFromCategory(category) {
     return category.name.replace(/^Điện thoại\s+/i, '').trim();
 }
+
+const pad = (number) => String(number).padStart(2, '0');
+
+// new Date(null) ra năm 1970 nên loại null và chuỗi rỗng trước
+function parseDate(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+// "2026-10-24T06:05:00Z" -> "24/10/2026"
+export function formatDate(value) {
+    const date = parseDate(value);
+    if (!date) return '';
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+}
+
+// "24/10/2026 13:05"
+export function formatDateTime(value) {
+    const date = parseDate(value);
+    if (!date) return '';
+    return `${formatDate(date)} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+// Tên một dòng hàng trong đơn: "hãng + tên" giống ở danh sách sản phẩm
+export function getOrderItemName(item) {
+    return getDisplayName({ brand: item.product_brand, name: item.product_name });
+}
+
+// "Samsung Galaxy S24 256GB và 1 sản phẩm khác"
+export function getOrderItemsSummary(order) {
+    const items = order.items || [];
+    if (items.length === 0) return '';
+    const first = getOrderItemName(items[0]);
+    return items.length === 1 ? first : `${first} và ${items.length - 1} sản phẩm khác`;
+}

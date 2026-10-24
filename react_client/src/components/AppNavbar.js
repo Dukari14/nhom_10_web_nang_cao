@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Button, Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
+import { Badge, Button, Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { brandFromCategory } from '../utils/format';
 
 export default function AppNavbar() {
     const { user, loading, logout } = useAuth();
+    const { itemCount } = useCart();
     const navigate = useNavigate();
     const [brands, setBrands] = useState([]);
 
@@ -55,8 +57,19 @@ export default function AppNavbar() {
                         )}
                     </Nav>
                     <Nav className="align-items-lg-center gap-2">
+                        {user && (
+                            <Nav.Link as={NavLink} to="/orders">
+                                Đơn hàng
+                            </Nav.Link>
+                        )}
                         <Nav.Link as={NavLink} to="/cart">
                             Giỏ hàng
+                            {itemCount > 0 && (
+                                <Badge bg="warning" text="dark" pill className="ms-1">
+                                    {itemCount}
+                                    <span className="visually-hidden"> sản phẩm trong giỏ</span>
+                                </Badge>
+                            )}
                         </Nav.Link>
                         {!loading &&
                             (user ? (

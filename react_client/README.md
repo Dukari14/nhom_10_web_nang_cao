@@ -10,7 +10,13 @@ Phần giao diện của dự án Nhóm 10, Đại học Phenikaa. Viết bằng
 | `/products` | Danh sách sản phẩm: tìm kiếm, bộ lọc giá, dung lượng, màu, hãng, phân trang |
 | `/products/:id` | Chi tiết sản phẩm và cấu hình |
 | `/login`, `/register` | Đăng nhập và đăng ký |
-| `/cart`, `/admin` | Trang tạm, sẽ làm ở bước sau |
+| `/cart` | Giỏ hàng: đổi số lượng, xóa, tổng tiền (cần đăng nhập) |
+| `/checkout` | Thanh toán: địa chỉ, số điện thoại, COD hoặc chuyển khoản (cần đăng nhập) |
+| `/orders` | Lịch sử đơn hàng, lọc theo trạng thái (cần đăng nhập) |
+| `/orders/:id` | Chi tiết đơn: sản phẩm, trạng thái, thanh toán, địa chỉ (cần đăng nhập) |
+| `/admin` | Trang tạm, sẽ làm ở bước sau |
+
+Các trang cần đăng nhập sẽ chuyển sang `/login` nếu chưa đăng nhập và quay lại đúng trang đó sau khi đăng nhập xong. Thông tin chuyển khoản ở trang thanh toán chỉ là dữ liệu minh họa.
 
 Bộ lọc ở trang danh sách nằm trên đường dẫn (ví dụ `/products?search=samsung&color=Đen&page=2`), nên tải lại trang hoặc gửi link vẫn giữ nguyên kết quả.
 
@@ -51,7 +57,7 @@ Nếu bạn mở giao diện bằng địa chỉ khác `http://localhost:3001`, 
 ```
 src/
   api.js            axios dùng chung (baseURL, withCredentials)
-  context/          AuthContext: trạng thái đăng nhập
+  context/          AuthContext (đăng nhập), CartContext (giỏ hàng, số lượng trên thanh điều hướng)
   components/       thanh điều hướng, chân trang, thẻ sản phẩm, thanh tìm kiếm, phân trang
   pages/            danh sách, chi tiết, đăng nhập/đăng ký, trang tạm
   web-users/        trang chủ

@@ -10,6 +10,7 @@ export function toOrderResponse(order: Order): OrderResponseDto {
       order_item_id: item.order_item_id,
       product_id: item.product.product_id,
       product_name: item.product.name,
+      product_brand: item.product.brand,
       quantity: item.quantity,
       price: fromCents(toCents(item.price)),
       subtotal: fromCents(toCents(item.price) * item.quantity),

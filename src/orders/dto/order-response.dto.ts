@@ -12,6 +12,9 @@ export class OrderItemResponseDto {
   @ApiProperty({ example: 'Galaxy S24 256GB' })
   product_name: string;
 
+  @ApiProperty({ example: 'Samsung', nullable: true })
+  product_brand: string | null;
+
   @ApiProperty({ example: 2 })
   quantity: number;
 

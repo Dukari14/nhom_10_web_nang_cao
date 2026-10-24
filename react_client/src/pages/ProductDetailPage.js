@@ -5,6 +5,7 @@ import api from '../api';
 import ErrorAlert from '../components/ErrorAlert';
 import ProductImage from '../components/ProductImage';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { getErrorMessages, isCanceled } from '../utils/errors';
 import { formatPrice, getDisplayName, getPriceInfo } from '../utils/format';
 import useDocumentTitle from '../utils/useDocumentTitle';
@@ -33,12 +34,15 @@ export default function ProductDetailPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
+    const { addItem } = useCart();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const [notice, setNotice] = useState('');
+    const [adding, setAdding] = useState(false);
+    const [addErrors, setAddErrors] = useState([]);
 
     useDocumentTitle(product ? getDisplayName(product) : 'Chi tiết sản phẩm');
 
@@ -47,6 +51,7 @@ export default function ProductDetailPage() {
         setLoading(true);
         setErrors([]);
         setNotice('');
+        setAddErrors([]);
         setQuantity(1);
         api.get(`/products/${id}`, { signal: controller.signal })
             .then((response) => {
@@ -94,13 +99,27 @@ export default function ProductDetailPage() {
         setQuantity(Math.min(maxQuantity, Math.max(1, number)));
     };
 
-    // Giỏ hàng làm ở bước sau: chưa đăng nhập thì chuyển sang đăng nhập, đã đăng nhập thì báo "Sắp có"
-    const handleAddToCart = () => {
+    // Chưa đăng nhập thì chuyển sang đăng nhập rồi quay lại trang này; "Mua ngay" thêm vào giỏ rồi sang thanh toán
+    const handleAddToCart = async (goToCheckout = false) => {
         if (!user) {
             navigate('/login', { state: { from: location.pathname } });
             return;
         }
-        setNotice('Chức năng giỏ hàng sắp có. Bạn vui lòng quay lại sau nhé!');
+        setAdding(true);
+        setNotice('');
+        setAddErrors([]);
+        try {
+            await addItem(product.product_id, quantity);
+            if (goToCheckout) {
+                navigate('/checkout');
+                return;
+            }
+            setNotice(`Đã thêm ${quantity} sản phẩm vào giỏ hàng.`);
+        } catch (error) {
+            setAddErrors(getErrorMessages(error));
+        } finally {
+            setAdding(false);
+        }
     };
 
     return (
@@ -173,17 +192,21 @@ export default function ProductDetailPage() {
                     </Form.Group>
 
                     <div className="d-flex flex-column flex-sm-row gap-2">
-                        <Button variant="primary" size="lg" className="flex-grow-1" disabled={soldOut} onClick={handleAddToCart}>
+                        <Button variant="primary" size="lg" className="flex-grow-1" disabled={soldOut || adding} onClick={() => handleAddToCart(false)}>
                             Thêm vào giỏ hàng
                         </Button>
-                        <Button variant="outline-primary" size="lg" className="flex-grow-1" disabled={soldOut} onClick={handleAddToCart}>
+                        <Button variant="outline-primary" size="lg" className="flex-grow-1" disabled={soldOut || adding} onClick={() => handleAddToCart(true)}>
                             Mua ngay
                         </Button>
                     </div>
 
+                    <ErrorAlert messages={addErrors} onClose={() => setAddErrors([])} className="mb-0" />
                     {notice && (
-                        <Alert variant="info" dismissible onClose={() => setNotice('')} className="mb-0">
-                            {notice}
+                        <Alert variant="success" dismissible onClose={() => setNotice('')} className="mb-0">
+                            {notice}{' '}
+                            <Alert.Link as={Link} to="/cart">
+                                Xem giỏ hàng
+                            </Alert.Link>
                         </Alert>
                     )}
                 </Col>

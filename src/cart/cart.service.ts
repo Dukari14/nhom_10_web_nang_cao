@@ -127,6 +127,10 @@ export class CartService {
         product: {
           product_id: item.product.product_id,
           name: item.product.name,
+          brand: item.product.brand,
+          ram: item.product.ram,
+          storage: item.product.storage,
+          color: item.product.color,
           slug: item.product.slug,
           image_url: item.product.image_url,
           stock: item.product.stock,
