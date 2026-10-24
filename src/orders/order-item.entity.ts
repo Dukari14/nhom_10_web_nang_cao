@@ -19,7 +19,7 @@ export class OrderItem {
   quantity: number;
 
   // Giá tại thời điểm đặt hàng, không đổi khi sản phẩm đổi giá
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 14, scale: 2 })
   price: string;
 
   @CreateDateColumn()

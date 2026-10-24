@@ -55,6 +55,7 @@ const DB_ERRORS: Record<string, { status: number; message: string }> = {
   ER_NO_REFERENCED_ROW_2: { status: 400, message: 'Dữ liệu tham chiếu không tồn tại' },
   ER_DATA_TOO_LONG: { status: 400, message: 'Dữ liệu gửi lên quá dài' },
   ER_WARN_DATA_OUT_OF_RANGE: { status: 400, message: 'Giá trị nằm ngoài phạm vi cho phép' },
+  ER_DATA_OUT_OF_RANGE: { status: 400, message: 'Giá trị nằm ngoài phạm vi cho phép' },
   ER_TRUNCATED_WRONG_VALUE: { status: 400, message: 'Dữ liệu gửi lên không hợp lệ' },
 };
 

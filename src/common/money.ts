@@ -14,7 +14,17 @@ export function unitPriceCents(product: { price: string | number; sale_price: st
   return toCents(product.sale_price ?? product.price);
 }
 
-// Chuỗi 2 chữ số thập phân để lưu vào cột DECIMAL(10,2)
+// Chuỗi 2 chữ số thập phân để lưu vào cột DECIMAL(14,2)
 export function centsToDecimal(cents: number): string {
   return fromCents(cents).toFixed(2);
+}
+
+// Cột tiền là DECIMAL(14,2): tối đa 999.999.999.999,99 (gần 1.000 tỷ).
+// Tính bằng xu thì tối đa 99.999.999.999.999 (14 chữ số), nhỏ hơn nhiều so với giới hạn
+// số nguyên an toàn của JavaScript (9.007.199.254.740.991) nên phép cộng và nhân không bị mất chính xác.
+export const MAX_AMOUNT_CENTS = 99_999_999_999_999;
+
+// true nếu số xu là số nguyên không âm, nằm trong giới hạn cột DECIMAL(14,2)
+export function isWithinMoneyLimit(cents: number): boolean {
+  return Number.isSafeInteger(cents) && cents >= 0 && cents <= MAX_AMOUNT_CENTS;
 }

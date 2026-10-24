@@ -14,8 +14,11 @@ import { Product } from '../products/product.entity';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderResponseDto } from './dto/order-response.dto';
-import { centsToDecimal, unitPriceCents } from '../common/money';
+import { MAX_AMOUNT_CENTS, centsToDecimal, isWithinMoneyLimit, unitPriceCents } from '../common/money';
 import { toOrderResponse } from './order.mapper';
+
+// "999.999.999.999" dùng trong thông báo lỗi
+const MAX_ORDER_TEXT = new Intl.NumberFormat('vi-VN').format(Math.floor(MAX_AMOUNT_CENTS / 100));
 
 @Injectable()
 export class OrdersService {
@@ -39,25 +42,34 @@ export class OrdersService {
         throw new BadRequestException('Giỏ hàng trống, không thể đặt hàng');
       }
 
+      // Tính trước tổng tiền, chưa ghi gì vào database: vượt giới hạn cột DECIMAL(14,2) thì từ chối ngay
       let totalCents = 0;
       const lines: { product: Product; quantity: number; priceCents: number }[] = [];
       for (const item of cart.items) {
+        // Giá tại thời điểm đặt: sẽ lưu vào order_items, đổi giá sau này không ảnh hưởng đơn cũ
+        const priceCents = unitPriceCents(item.product);
+        totalCents += priceCents * item.quantity;
+        if (!isWithinMoneyLimit(totalCents)) {
+          throw new BadRequestException(
+            `Tổng giá trị đơn hàng vượt quá giới hạn cho phép (${MAX_ORDER_TEXT}đ). Vui lòng giảm số lượng hoặc chia thành nhiều đơn`,
+          );
+        }
+        lines.push({ product: item.product, quantity: item.quantity, priceCents });
+      }
+
+      for (const line of lines) {
         // Trừ kho bằng một câu UPDATE có điều kiện: hai người đặt cùng lúc
         // cũng không làm tồn kho âm (affected = 0 khi không còn đủ hàng)
         const result = await manager.update(
           Product,
-          { product_id: item.product.product_id, is_active: true, stock: MoreThanOrEqual(item.quantity) },
-          { stock: () => `stock - ${Number(item.quantity)}` },
+          { product_id: line.product.product_id, is_active: true, stock: MoreThanOrEqual(line.quantity) },
+          { stock: () => `stock - ${Number(line.quantity)}` },
         );
         if (!result.affected) {
           throw new BadRequestException(
-            `Sản phẩm "${item.product.name}" không đủ hàng hoặc đã ngừng bán`,
+            `Sản phẩm "${line.product.name}" không đủ hàng hoặc đã ngừng bán`,
           );
         }
-        // Giá tại thời điểm đặt: sẽ lưu vào order_items, đổi giá sau này không ảnh hưởng đơn cũ
-        const priceCents = unitPriceCents(item.product);
-        totalCents += priceCents * item.quantity;
-        lines.push({ product: item.product, quantity: item.quantity, priceCents });
       }
 
       const order = await manager.save(Order, {

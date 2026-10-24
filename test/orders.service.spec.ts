@@ -115,6 +115,52 @@ describe('OrdersService', () => {
     });
   });
 
+  describe('create - đơn giá trị lớn', () => {
+    const flagship = { product_id: 7, name: 'iPhone 15 Pro Max 256GB', price: '34990000.00', sale_price: null, stock: 50 };
+
+    it('đơn trên 100 triệu vẫn đặt được và lưu đúng tổng tiền', async () => {
+      // 5 máy x 34.990.000đ = 174.950.000đ, vượt giới hạn cũ của DECIMAL(10,2)
+      manager.findOne.mockResolvedValue({ cart_id: 7, items: [{ cart_item_id: 11, quantity: 5, product: flagship }] });
+      orderRepository.findOne.mockResolvedValue({
+        ...savedOrder(),
+        total_amount: '174950000.00',
+        items: [{ order_item_id: 1, quantity: 5, price: '34990000.00', product: flagship }],
+        payments: [{ payment_id: 1, payment_method: PaymentMethod.COD, status: PaymentStatus.PENDING, amount: '174950000.00' }],
+      });
+
+      const result = await service.create('u1', dto);
+
+      expect(manager.save).toHaveBeenCalledWith(Order, expect.objectContaining({ total_amount: '174950000.00' }));
+      expect(manager.save).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ amount: '174950000.00' }),
+      );
+      expect(result.total_amount).toBe(174950000);
+      expect(result.payment?.amount).toBe(174950000);
+      expect(committed).toBe(true);
+    });
+
+    it('vượt giới hạn cột tiền thì báo lỗi 400 tiếng Việt, không trừ kho, không tạo đơn', async () => {
+      // Mỗi dòng tối đa 100 máy x 99.999.999,99đ (giới hạn của DTO), nên cần 101 dòng
+      // mới vượt 999.999.999.999đ: 101 x 100 x 99.999.999,99đ ≈ 1.010 tỷ đồng
+      const items = Array.from({ length: 101 }, (_, index) => ({
+        cart_item_id: index + 1,
+        quantity: 100,
+        product: { product_id: 100 + index, name: 'Máy thử giới hạn', price: '99999999.99', sale_price: null, stock: 500 },
+      }));
+      manager.findOne.mockResolvedValue({ cart_id: 7, items });
+      const error = await service.create('u1', dto).catch((e) => e);
+
+      expect(error).toBeInstanceOf(BadRequestException);
+      expect(error.message).toContain('Tổng giá trị đơn hàng vượt quá giới hạn cho phép (999.999.999.999đ)');
+      expect(error.message).toContain('chia thành nhiều đơn');
+      expect(manager.update).not.toHaveBeenCalled();
+      expect(manager.save).not.toHaveBeenCalled();
+      expect(manager.delete).not.toHaveBeenCalled();
+      expect(rolledBack).toBe(true);
+    });
+  });
+
   describe('create - giỏ hàng trống', () => {
     it('báo lỗi 400 khi chưa có giỏ hàng', async () => {
       manager.findOne.mockResolvedValue(null);

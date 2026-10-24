@@ -25,7 +25,7 @@ export class Order {
   @PrimaryGeneratedColumn()
   order_id: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 14, scale: 2 })
   total_amount: string;
 
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })

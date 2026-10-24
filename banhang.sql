@@ -98,7 +98,7 @@ CREATE TABLE cart_items (
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,          -- Khóa ngoại liên kết với bảng users
-    total_amount DECIMAL(10, 2) NOT NULL,
+    total_amount DECIMAL(14, 2) NOT NULL,
     status ENUM('pending', 'confirmed', 'shipping', 'delivered', 'cancelled') NOT NULL DEFAULT 'pending',
     shipping_address VARCHAR(255) NOT NULL, -- Địa chỉ giao hàng
     phone VARCHAR(20) NOT NULL,             -- Số điện thoại người nhận
@@ -116,7 +116,7 @@ CREATE TABLE order_items (
     order_id INT NOT NULL,                 -- Khóa ngoại liên kết với bảng orders
     product_id INT NOT NULL,               -- Khóa ngoại liên kết với bảng products
     quantity INT NOT NULL DEFAULT 1,
-    price DECIMAL(10, 2) NOT NULL,         -- Giá tại thời điểm đặt hàng
+    price DECIMAL(14, 2) NOT NULL,         -- Giá tại thời điểm đặt hàng
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
@@ -154,7 +154,7 @@ CREATE TABLE reviews (
 CREATE TABLE payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,                 -- Khóa ngoại liên kết với bảng orders
-    amount DECIMAL(10, 2) NOT NULL,
+    amount DECIMAL(14, 2) NOT NULL,
     payment_method ENUM('COD', 'BANK_TRANSFER') NOT NULL DEFAULT 'COD', -- COD: thanh toán khi nhận hàng
     status ENUM('pending', 'completed', 'failed') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

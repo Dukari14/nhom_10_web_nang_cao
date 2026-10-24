@@ -25,7 +25,7 @@ export class Payment {
   @PrimaryGeneratedColumn()
   payment_id: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 14, scale: 2 })
   amount: string;
 
   // COD: thanh toán khi nhận hàng, BANK_TRANSFER: chuyển khoản
