@@ -111,6 +111,20 @@ Tất cả endpoint dưới đây yêu cầu đăng nhập và chỉ truy cập 
 
 Đặt hàng chạy trong một transaction: tạo đơn, lưu giá từng sản phẩm tại thời điểm đặt, trừ tồn kho, ghi nhận thanh toán và xóa giỏ. Lỗi ở bước nào thì hoàn tác toàn bộ.
 
+## API quản trị
+
+Chỉ tài khoản có role `admin` mới gọi được. Quyền và trạng thái khóa được kiểm tra lại trong database ở mỗi request, nên khóa tài khoản hoặc đổi role có hiệu lực ngay.
+
+| Method | Đường dẫn | Mô tả |
+| --- | --- | --- |
+| GET | `/api/admin/orders?status=&page=&limit=` | Đơn hàng của mọi khách, lọc theo trạng thái, phân trang |
+| PATCH | `/api/admin/orders/:id/status` | Đổi trạng thái đơn. Chỉ cho đi tiến: `pending` → `confirmed` → `shipping` → `delivered`; hủy được khi `pending` hoặc `confirmed` (hoàn lại tồn kho) |
+| GET | `/api/admin/users?search=&role=&is_active=&page=&limit=` | Danh sách tài khoản (không có mật khẩu) |
+| PATCH | `/api/admin/users/:id` | Khóa/mở khóa (`is_active`), đổi `role`. Admin không tự khóa mình được |
+| GET | `/api/admin/stats?from=&to=&groupBy=day` | Doanh thu (các đơn đã giao), số máy bán ra, doanh thu theo ngày hoặc tháng (`groupBy=day` hoặc `month`), top 5 bán chạy |
+
+Mọi lỗi trả về cùng một dạng JSON `{statusCode, error, message, path, timestamp}` với thông báo tiếng Việt, không lộ chi tiết hệ thống.
+
 ## Dữ liệu mẫu
 
 Sau khi chạy backend một lần (để tạo bảng), chạy lệnh sau để thêm 20 điện thoại, 6 danh mục và một tài khoản admin. Chạy lại nhiều lần vẫn an toàn.
@@ -132,6 +146,7 @@ npm run test
 ```
 src/
   auth/         đăng ký, đăng nhập, guard, phân quyền
+  admin/        đơn hàng, tài khoản, thống kê cho admin
   user/         entity người dùng và hồ sơ
   categories/   danh mục
   products/     sản phẩm: tìm kiếm, lọc, quản lý (admin)

@@ -3,6 +3,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,     -- Email dùng để đăng nhập, phải là duy nhất
     password_hash VARCHAR(255) NOT NULL,    -- Lưu mật khẩu ĐÃ HÃM (Bcrypt/Argon2), TUYỆT ĐỐI KHÔNG LƯU PLAIN TEXT
     role ENUM('admin', 'customer') NOT NULL DEFAULT 'customer',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE, -- FALSE = tài khoản bị admin khóa
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

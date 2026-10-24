@@ -14,7 +14,8 @@ import { Product } from '../products/product.entity';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderResponseDto } from './dto/order-response.dto';
-import { centsToDecimal, fromCents, toCents, unitPriceCents } from '../common/money';
+import { centsToDecimal, unitPriceCents } from '../common/money';
+import { toOrderResponse } from './order.mapper';
 
 @Injectable()
 export class OrdersService {
@@ -91,7 +92,7 @@ export class OrdersService {
       relations: { items: { product: true }, payments: true },
       order: { created_at: 'DESC', order_id: 'DESC' },
     });
-    return orders.map((order) => this.toResponse(order));
+    return orders.map(toOrderResponse);
   }
 
   // 3. Chi tiết một đơn, chỉ chủ đơn mới xem được
@@ -106,40 +107,6 @@ export class OrdersService {
     if (order.user.user_id !== userId) {
       throw new ForbiddenException('Bạn không có quyền xem đơn hàng này');
     }
-    return this.toResponse(order);
-  }
-
-  // Đổi dữ liệu DB (tiền dạng chuỗi) sang response (tiền dạng số), không lộ thông tin user
-  private toResponse(order: Order): OrderResponseDto {
-    const items = [...(order.items ?? [])]
-      .sort((a, b) => a.order_item_id - b.order_item_id)
-      .map((item) => ({
-        order_item_id: item.order_item_id,
-        product_id: item.product.product_id,
-        product_name: item.product.name,
-        quantity: item.quantity,
-        price: fromCents(toCents(item.price)),
-        subtotal: fromCents(toCents(item.price) * item.quantity),
-      }));
-    const payment = order.payments?.[0];
-
-    return {
-      order_id: order.order_id,
-      status: order.status,
-      total_amount: fromCents(toCents(order.total_amount)),
-      shipping_address: order.shipping_address,
-      phone: order.phone,
-      items,
-      payment: payment
-        ? {
-            payment_id: payment.payment_id,
-            payment_method: payment.payment_method,
-            status: payment.status,
-            amount: fromCents(toCents(payment.amount)),
-          }
-        : null,
-      created_at: order.created_at,
-      updated_at: order.updated_at,
-    };
+    return toOrderResponse(order);
   }
 }

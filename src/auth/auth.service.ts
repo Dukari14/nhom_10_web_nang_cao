@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -58,6 +59,10 @@ export class AuthService {
     // Cùng một thông báo cho cả "sai email" và "sai mật khẩu" để không lộ email nào tồn tại
     if (!user || !isMatch) {
       throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
+    }
+    // Kiểm tra sau khi đúng mật khẩu để người lạ không dò được tài khoản nào bị khóa
+    if (!user.is_active) {
+      throw new ForbiddenException('Tài khoản đã bị khóa, vui lòng liên hệ quản trị viên');
     }
 
     const payload: JwtPayload = { sub: user.user_id, email: user.email, role: user.role };

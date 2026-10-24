@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -24,6 +23,7 @@ import { CartService } from './cart.service';
 import { AddCartItemDto, UpdateCartItemDto } from './dto/cart-item.dto';
 import { CartResponseDto } from './dto/cart-response.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ParseIdPipe } from '../common/pipes';
 import { CurrentUserId } from '../auth/current-user.decorator';
 import { AUTH_COOKIE_NAME } from '../auth/auth.constants';
 
@@ -63,7 +63,7 @@ export class CartController {
   @ApiNotFoundResponse({ description: 'Không tìm thấy dòng giỏ hàng' })
   updateItem(
     @CurrentUserId() userId: string,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: number,
     @Body() dto: UpdateCartItemDto,
   ): Promise<CartResponseDto> {
     return this.cartService.updateItem(userId, id, dto);
@@ -78,7 +78,7 @@ export class CartController {
   @ApiNotFoundResponse({ description: 'Không tìm thấy dòng giỏ hàng' })
   removeItem(
     @CurrentUserId() userId: string,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: number,
   ): Promise<CartResponseDto> {
     return this.cartService.removeItem(userId, id);
   }

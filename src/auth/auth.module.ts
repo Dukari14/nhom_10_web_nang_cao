@@ -25,7 +25,7 @@ import { JWT_EXPIRES_IN } from './auth.constants';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, RolesGuard],
-  // Export JwtModule để module khác dùng được JwtAuthGuard
-  exports: [AuthService, JwtModule, JwtAuthGuard, RolesGuard],
+  // Export cả UserModule vì JwtAuthGuard cần USER_REPOSITORY khi được dùng ở module khác
+  exports: [AuthService, JwtModule, UserModule, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}

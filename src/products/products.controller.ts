@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -37,6 +36,7 @@ import {
   ProductResponseDto,
 } from './dto/product-response.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ParseIdPipe } from '../common/pipes';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AUTH_COOKIE_NAME } from '../auth/auth.constants';
@@ -80,7 +80,7 @@ export class ProductsController {
   @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiOkResponse({ type: ProductDetailResponseDto })
   @ApiNotFoundResponse({ description: 'Không tìm thấy sản phẩm' })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Product> {
+  findOne(@Param('id', ParseIdPipe) id: number): Promise<Product> {
     return this.productsService.findOne(id);
   }
 
@@ -113,7 +113,7 @@ export class ProductsController {
   @ApiNotFoundResponse({ description: 'Không tìm thấy sản phẩm' })
   @ApiConflictResponse({ description: 'Slug đã tồn tại' })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: number,
     @Body() dto: UpdateProductDto,
   ): Promise<Product> {
     return this.productsService.update(id, dto);
@@ -132,7 +132,7 @@ export class ProductsController {
   @ApiForbiddenResponse({ description: 'Không phải admin' })
   @ApiNotFoundResponse({ description: 'Không tìm thấy sản phẩm' })
   @ApiConflictResponse({ description: 'Sản phẩm đang có trong giỏ hàng hoặc đơn hàng' })
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  remove(@Param('id', ParseIdPipe) id: number): Promise<void> {
     return this.productsService.remove(id);
   }
 }

@@ -1,17 +1,6 @@
 import { Transform } from 'class-transformer';
+import { toNumber, toText } from '../../common/transforms';
 import { IsInt, IsNumber, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
-
-// Query string rỗng (?search=&minPrice=) được coi như không truyền
-const toText = ({ value }: { value: unknown }) => {
-  if (typeof value !== 'string') return value;
-  const text = value.trim();
-  return text === '' ? undefined : text;
-};
-
-const toNumber = ({ value }: { value: unknown }) => {
-  if (value === undefined || value === null || value === '') return undefined;
-  return Number(value);
-};
 
 export class ListProductsQueryDto {
   @IsOptional()

@@ -31,6 +31,10 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole;
 
+  // false = tài khoản bị admin khóa, không đăng nhập được
+  @Column({ type: 'boolean', default: true })
+  is_active: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 

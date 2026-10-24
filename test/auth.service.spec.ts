@@ -1,4 +1,4 @@
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '../src/auth/auth.service';
@@ -68,6 +68,7 @@ describe('AuthService', () => {
         email: registerDto.email,
         password_hash: await bcrypt.hash(registerDto.password, 4),
         role: UserRole.CUSTOMER,
+        is_active: true,
         profile: { full_name: registerDto.full_name } as User['profile'],
       };
       userRepository.findOne.mockResolvedValue(existingUser);
@@ -77,6 +78,15 @@ describe('AuthService', () => {
       await expect(
         service.login({ email: registerDto.email, password: 'sai-mat-khau' }),
       ).rejects.toThrow(UnauthorizedException);
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
+    });
+
+    it('báo lỗi 403 khi tài khoản đã bị khóa dù mật khẩu đúng', async () => {
+      userRepository.findOne.mockResolvedValue({ ...existingUser, is_active: false });
+
+      await expect(
+        service.login({ email: registerDto.email, password: registerDto.password }),
+      ).rejects.toThrow(ForbiddenException);
       expect(jwtService.signAsync).not.toHaveBeenCalled();
     });
 

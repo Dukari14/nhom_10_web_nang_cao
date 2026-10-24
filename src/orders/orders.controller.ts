@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
@@ -15,6 +15,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderResponseDto } from './dto/order-response.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ParseIdPipe } from '../common/pipes';
 import { CurrentUserId } from '../auth/current-user.decorator';
 import { AUTH_COOKIE_NAME } from '../auth/auth.constants';
 
@@ -56,7 +57,7 @@ export class OrdersController {
   @ApiNotFoundResponse({ description: 'Không tìm thấy đơn hàng' })
   findOne(
     @CurrentUserId() userId: string,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: number,
   ): Promise<OrderResponseDto> {
     return this.ordersService.findOne(userId, id);
   }
