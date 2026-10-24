@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import api from '../../api';
 import ProductCard from '../../components/ProductCard';
+import EmptyState from '../../components/EmptyState';
 import ErrorAlert from '../../components/ErrorAlert';
 import { getErrorMessages, isCanceled } from '../../utils/errors';
 
@@ -63,7 +64,7 @@ export default function HomeScreenContent() {
             )}
 
             {!loading && errors.length === 0 && products.length === 0 && (
-                <Alert variant="info">Hiện chưa có sản phẩm nào.</Alert>
+                <EmptyState message="Hiện chưa có sản phẩm nào." />
             )}
 
             {!loading && products.length > 0 && (

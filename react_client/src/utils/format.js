@@ -39,10 +39,10 @@ export function getInitial(product) {
     return getDisplayName(product).trim().charAt(0).toUpperCase() || '?';
 }
 
-// "8GB / 256GB · Đen" từ các trường có dữ liệu
+// "8GB / 256GB, Đen" từ các trường có dữ liệu
 export function getSpecLine(product) {
     const memory = [product.ram, product.storage].filter(Boolean).join(' / ');
-    return [memory, product.color].filter(Boolean).join(' · ');
+    return [memory, product.color].filter(Boolean).join(', ');
 }
 
 // Sản phẩm tạo trong vòng 14 ngày được coi là mới

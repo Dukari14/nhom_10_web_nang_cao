@@ -58,7 +58,7 @@ describe('tên và thông số sản phẩm', () => {
     });
 
     test('dòng thông số bỏ qua phần thiếu', () => {
-        expect(getSpecLine({ ram: '8GB', storage: '256GB', color: 'Đen' })).toBe('8GB / 256GB · Đen');
+        expect(getSpecLine({ ram: '8GB', storage: '256GB', color: 'Đen' })).toBe('8GB / 256GB, Đen');
         expect(getSpecLine({ ram: null, storage: '128GB', color: null })).toBe('128GB');
     });
 

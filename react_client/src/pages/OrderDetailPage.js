@@ -95,7 +95,7 @@ export default function OrderDetailPage() {
                 <span className="text-secondary small">Đặt ngày {formatDateTime(order.created_at)}</span>
             </div>
 
-            <Card className="summary-card mb-3">
+            <Card className="mb-3">
                 <Card.Body>
                     {order.status === 'cancelled' ? (
                         <p className="mb-0">Đơn hàng này đã được hủy.</p>
@@ -107,7 +107,7 @@ export default function OrderDetailPage() {
 
             <Row className="g-4">
                 <Col lg={8}>
-                    <Card className="summary-card">
+                    <Card>
                         <Card.Body>
                             <h2 className="fs-5 fw-bold">Sản phẩm</h2>
                             <Table responsive className="align-middle mb-0">
@@ -155,14 +155,14 @@ export default function OrderDetailPage() {
                 </Col>
 
                 <Col lg={4} className="d-flex flex-column gap-3">
-                    <Card className="summary-card">
+                    <Card>
                         <Card.Body>
                             <h2 className="fs-5 fw-bold">Giao hàng</h2>
                             <div>{order.shipping_address}</div>
                             <div className="text-secondary">Điện thoại: {order.phone}</div>
                         </Card.Body>
                     </Card>
-                    <Card className="summary-card">
+                    <Card>
                         <Card.Body className="d-flex flex-column gap-1">
                             <h2 className="fs-5 fw-bold">Thanh toán</h2>
                             {payment ? (

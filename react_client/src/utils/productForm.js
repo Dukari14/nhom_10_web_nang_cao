@@ -1,6 +1,13 @@
 // Giới hạn của cột DECIMAL(10,2) trong database
 export const MAX_PRODUCT_PRICE = 99999999.99;
 
+// Đường dẫn ảnh hợp lệ: bắt đầu bằng "/" (ảnh nằm trong react_client/public, ví dụ /images/products/ten-file.webp)
+// hoặc bằng http:// / https:// (ảnh ở máy chủ khác). Không có khoảng trắng.
+export function isValidImagePath(value) {
+    const text = String(value || '').trim();
+    return /^\/(?!\/)\S+$/.test(text) || /^https?:\/\/\S+$/i.test(text);
+}
+
 export const EMPTY_PRODUCT_FORM = {
     category_id: '',
     name: '',
@@ -57,6 +64,10 @@ export function validateProductForm(values) {
 
     const stock = Number(values.stock);
     if (values.stock === '' || !Number.isInteger(stock) || stock < 0) errors.stock = 'Tồn kho phải là số nguyên từ 0 trở lên';
+
+    if (values.image_url.trim() && !isValidImagePath(values.image_url)) {
+        errors.image_url = 'Đường dẫn ảnh phải bắt đầu bằng / hoặc https://, không có khoảng trắng';
+    }
 
     if (values.slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)) {
         errors.slug = 'Slug chỉ gồm chữ thường, số và dấu gạch ngang';

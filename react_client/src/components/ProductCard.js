@@ -1,6 +1,7 @@
-import { Badge, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ProductImage from './ProductImage';
+import StatusBadge from './StatusBadge';
 import { formatPrice, getDisplayName, getPriceInfo, getSpecLine, isNewProduct } from '../utils/format';
 
 export default function ProductCard({ product }) {
@@ -15,14 +16,14 @@ export default function ProductCard({ product }) {
                 <Card.Body className="d-flex flex-column gap-2 p-3">
                     <div className="position-relative">
                         <ProductImage product={product} size="sm" />
-                        <div className="position-absolute top-0 start-0 m-2 d-flex gap-1">
-                            {isNewProduct(product) && <Badge bg="success">Mới</Badge>}
-                            {price.hasDiscount && <Badge bg="danger">-{price.discountPercent}%</Badge>}
+                        <div className="position-absolute top-0 start-0 m-2 d-flex align-items-start gap-1">
+                            {isNewProduct(product) && <StatusBadge tone="green">Mới</StatusBadge>}
+                            {price.hasDiscount && <span className="discount-tag">-{price.discountPercent}%</span>}
                         </div>
                         {soldOut && (
-                            <Badge bg="dark" className="position-absolute bottom-0 end-0 m-2">
+                            <StatusBadge tone="dark" className="position-absolute bottom-0 end-0 m-2">
                                 Hết hàng
-                            </Badge>
+                            </StatusBadge>
                         )}
                     </div>
                     <Card.Title as="h3" className="product-name mb-0">
@@ -30,7 +31,9 @@ export default function ProductCard({ product }) {
                     </Card.Title>
                     {spec && <Card.Text className="text-secondary small mb-0">{spec}</Card.Text>}
                     <div className="mt-auto">
-                        <span className="price-current">{formatPrice(price.current)}</span>{' '}
+                        <span className={`price-current ${price.hasDiscount ? 'is-sale' : ''}`}>
+                            {formatPrice(price.current)}
+                        </span>{' '}
                         {price.hasDiscount && <span className="price-original">{formatPrice(price.original)}</span>}
                         {lowStock && <div className="text-danger small">Chỉ còn {product.stock} sản phẩm</div>}
                     </div>

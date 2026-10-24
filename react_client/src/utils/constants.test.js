@@ -1,11 +1,11 @@
 import {
     ORDER_STATUS_LABELS,
     ORDER_STATUS_STEPS,
-    ORDER_STATUS_VARIANTS,
+    ORDER_STATUS_TONES,
     ORDER_TRANSITIONS,
     PAYMENT_METHOD_LABELS,
     PAYMENT_STATUS_LABELS,
-    PAYMENT_STATUS_VARIANTS,
+    PAYMENT_STATUS_TONES,
     ROLE_LABELS,
 } from './constants';
 
@@ -19,7 +19,7 @@ describe('nhãn trạng thái', () => {
             cancelled: 'Đã hủy',
         });
         Object.keys(ORDER_STATUS_LABELS).forEach((status) => {
-            expect(ORDER_STATUS_VARIANTS[status]).toBeDefined();
+            expect(ORDER_STATUS_TONES[status]).toBeDefined();
         });
     });
 
@@ -35,7 +35,7 @@ describe('nhãn trạng thái', () => {
             failed: 'Thất bại',
         });
         Object.keys(PAYMENT_STATUS_LABELS).forEach((status) => {
-            expect(PAYMENT_STATUS_VARIANTS[status]).toBeDefined();
+            expect(PAYMENT_STATUS_TONES[status]).toBeDefined();
         });
         expect(Object.keys(PAYMENT_METHOD_LABELS)).toEqual(['COD', 'BANK_TRANSFER']);
     });
@@ -54,6 +54,16 @@ describe('chuyển trạng thái đơn hàng', () => {
         Object.values(ORDER_TRANSITIONS)
             .flat()
             .forEach((status) => expect(ORDER_STATUS_LABELS[status]).toBeDefined());
+    });
+
+    test('tông màu huy hiệu đúng ý nghĩa', () => {
+        expect(ORDER_STATUS_TONES).toEqual({
+            pending: 'gray',
+            confirmed: 'blue',
+            shipping: 'yellow',
+            delivered: 'green',
+            cancelled: 'red',
+        });
     });
 
     test('nhãn vai trò', () => {

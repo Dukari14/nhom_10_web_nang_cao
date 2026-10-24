@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Form, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row, Spinner } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import api from '../api';
 import AppPagination from '../components/AppPagination';
+import EmptyState from '../components/EmptyState';
 import ErrorAlert from '../components/ErrorAlert';
 import ProductCard from '../components/ProductCard';
 import SearchBar from '../components/SearchBar';
@@ -232,16 +233,11 @@ export default function ProductListPage() {
                         )}
 
                         {!loading && result && result.items.length === 0 && (
-                            <Alert variant="info">
-                                Không tìm thấy sản phẩm phù hợp. Hãy thử bỏ bớt bộ lọc hoặc đổi từ khóa.
-                                {hasFilters && (
-                                    <div className="mt-2">
-                                        <Button variant="outline-primary" size="sm" onClick={clearFilters}>
-                                            Xóa bộ lọc
-                                        </Button>
-                                    </div>
-                                )}
-                            </Alert>
+                            <EmptyState
+                                message="Không tìm thấy sản phẩm phù hợp với bộ lọc hiện tại."
+                                actionLabel={hasFilters ? 'Xóa bộ lọc' : undefined}
+                                onAction={clearFilters}
+                            />
                         )}
 
                         {!loading && result && result.items.length > 0 && (

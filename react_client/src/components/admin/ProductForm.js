@@ -1,7 +1,36 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row, Spinner } from 'react-bootstrap';
 import ErrorAlert from '../ErrorAlert';
-import { EMPTY_PRODUCT_FORM, formToPayload, productToForm, validateProductForm } from '../../utils/productForm';
+import {
+    EMPTY_PRODUCT_FORM,
+    formToPayload,
+    isValidImagePath,
+    productToForm,
+    validateProductForm,
+} from '../../utils/productForm';
+
+// Xem trước ảnh nhỏ khi đường dẫn hợp lệ; ảnh không tải được thì báo nhẹ ngay dưới ô nhập
+function ImagePreview({ url }) {
+    const [failed, setFailed] = useState(false);
+
+    useEffect(() => {
+        setFailed(false);
+    }, [url]);
+
+    if (!isValidImagePath(url)) return null;
+    if (failed) return <div className="text-danger small mt-1">Không tải được ảnh từ đường dẫn này</div>;
+    return (
+        <img
+            src={url.trim()}
+            alt="Xem trước ảnh sản phẩm"
+            width={64}
+            height={64}
+            className="mt-2 border rounded"
+            style={{ objectFit: 'contain', background: 'var(--surface)' }}
+            onError={() => setFailed(true)}
+        />
+    );
+}
 
 // Form thêm/sửa sản phẩm. product = null là thêm mới. onSubmit(payload) trả về Promise, lỗi ném ra để hiển thị.
 export default function ProductForm({ product, categories, saving, serverErrors, onSubmit, onCancel }) {
@@ -73,7 +102,16 @@ export default function ProductForm({ product, categories, saving, serverErrors,
                         <Col xs={6}>{text('price', 'Giá (đ)', { type: 'number', min: 0, step: 1000 })}</Col>
                         <Col xs={6}>{text('sale_price', 'Giá khuyến mãi (đ)', { type: 'number', min: 0, step: 1000 })}</Col>
                         <Col xs={6}>{text('stock', 'Tồn kho', { type: 'number', min: 0, step: 1 })}</Col>
-                        <Col xs={6}>{text('image_url', 'Đường dẫn ảnh', { maxLength: 255 })}</Col>
+                        <Col xs={12}>
+                            {text('image_url', 'Đường dẫn ảnh', {
+                                maxLength: 255,
+                                placeholder: '/images/products/ten-file.webp',
+                            })}
+                            <Form.Text muted>
+                                Ảnh trong thư mục react_client/public: /images/products/ten-file.webp. Ảnh ở nơi khác: https://...
+                            </Form.Text>
+                            <ImagePreview url={values.image_url} />
+                        </Col>
                         <Col xs={12}>
                             {text('slug', 'Slug (đường dẫn thân thiện)', {
                                 maxLength: 255,

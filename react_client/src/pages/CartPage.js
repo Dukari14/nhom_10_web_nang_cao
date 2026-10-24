@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Card, Col, Container, ListGroup, Row, Spinner } from 'react-bootstrap';
+import { Button, Card, Col, Container, ListGroup, Row, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import EmptyState from '../components/EmptyState';
 import ErrorAlert from '../components/ErrorAlert';
 import ProductImage from '../components/ProductImage';
 import QuantityInput from '../components/QuantityInput';
@@ -62,12 +63,7 @@ export default function CartPage() {
             <ErrorAlert messages={errors} onClose={() => setErrors([])} />
 
             {items.length === 0 ? (
-                <Alert variant="info">
-                    <p className="mb-2">Giỏ hàng của bạn đang trống.</p>
-                    <Button as={Link} to="/products" variant="primary">
-                        Xem điện thoại
-                    </Button>
-                </Alert>
+                <EmptyState message="Giỏ hàng của bạn đang trống." actionLabel="Xem điện thoại" to="/products" />
             ) : (
                 <Row className="g-4">
                     <Col lg={8}>
@@ -124,13 +120,13 @@ export default function CartPage() {
                         </ListGroup>
                         <div className="mt-3">
                             <Link to="/products" className="fw-semibold text-decoration-none">
-                                ‹ Tiếp tục mua sắm
+                                Tiếp tục mua sắm
                             </Link>
                         </div>
                     </Col>
 
                     <Col lg={4}>
-                        <Card className="summary-card">
+                        <Card>
                             <Card.Body className="d-flex flex-column gap-2">
                                 <h2 className="fs-5 fw-bold">Tóm tắt đơn hàng</h2>
                                 <div className="d-flex justify-content-between">

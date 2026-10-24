@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Card, Container, Nav, Spinner } from 'react-bootstrap';
+import { Button, Card, Container, Nav, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import api from '../api';
+import EmptyState from '../components/EmptyState';
 import ErrorAlert from '../components/ErrorAlert';
 import { OrderStatusBadge, PaymentStatusBadge } from '../components/OrderStatus';
 import { ORDER_STATUS_LABELS } from '../utils/constants';
@@ -59,12 +60,7 @@ export default function OrdersPage() {
             <h1 className="fs-3 fw-bold mb-3">Đơn hàng của tôi</h1>
 
             {orders.length === 0 ? (
-                <Alert variant="info">
-                    <p className="mb-2">Bạn chưa có đơn hàng nào.</p>
-                    <Button as={Link} to="/products" variant="primary">
-                        Xem điện thoại
-                    </Button>
-                </Alert>
+                <EmptyState message="Bạn chưa có đơn hàng nào." actionLabel="Xem điện thoại" to="/products" />
             ) : (
                 <>
                     <Nav variant="pills" className="flex-nowrap overflow-auto pb-2 mb-3 gap-1" aria-label="Lọc đơn hàng theo trạng thái">
@@ -77,11 +73,17 @@ export default function OrdersPage() {
                         ))}
                     </Nav>
 
-                    {visible.length === 0 && <Alert variant="info">Không có đơn hàng nào ở trạng thái này.</Alert>}
+                    {visible.length === 0 && (
+                        <EmptyState
+                            message="Không có đơn hàng nào ở trạng thái này."
+                            actionLabel="Xem tất cả đơn"
+                            onAction={() => setTab('all')}
+                        />
+                    )}
 
                     <div className="d-flex flex-column gap-3">
                         {visible.map((order) => (
-                            <Card key={order.order_id} className="summary-card">
+                            <Card key={order.order_id}>
                                 <Card.Body className="d-flex flex-column flex-md-row gap-2 gap-md-3 align-items-md-center">
                                     <div className="flex-grow-1">
                                         <div className="d-flex flex-wrap align-items-center gap-2">

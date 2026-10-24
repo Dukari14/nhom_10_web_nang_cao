@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Alert, Badge, Breadcrumb, Button, Col, Container, Form, Row, Spinner, Table } from 'react-bootstrap';
+import { Alert, Breadcrumb, Button, Col, Container, Form, Row, Spinner, Table } from 'react-bootstrap';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import api from '../api';
 import ErrorAlert from '../components/ErrorAlert';
 import ProductImage from '../components/ProductImage';
+import StatusBadge from '../components/StatusBadge';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getErrorMessages, isCanceled } from '../utils/errors';
@@ -146,21 +147,19 @@ export default function ProductDetailPage() {
 
                 <Col md={6} className="d-flex flex-column gap-3">
                     <h1 className="fs-3 fw-bold mb-0">{getDisplayName(product)}</h1>
-                    <div className="text-secondary">
-                        {product.brand && <>Thương hiệu: {product.brand} · </>}
-                        {soldOut ? (
-                            <Badge bg="dark">Hết hàng</Badge>
-                        ) : (
-                            <span>Còn hàng ({product.stock})</span>
-                        )}
+                    <div className="d-flex flex-wrap align-items-center gap-3 text-secondary">
+                        {product.brand && <span>Thương hiệu: {product.brand}</span>}
+                        {soldOut ? <StatusBadge tone="dark">Hết hàng</StatusBadge> : <span>Còn hàng ({product.stock})</span>}
                     </div>
 
-                    <div>
-                        <span className="price-current price-large">{formatPrice(price.current)}</span>{' '}
+                    <div className="d-flex flex-wrap align-items-center gap-2">
+                        <span className={`price-current price-large ${price.hasDiscount ? 'is-sale' : ''}`}>
+                            {formatPrice(price.current)}
+                        </span>
                         {price.hasDiscount && (
                             <>
-                                <span className="price-original fs-6">{formatPrice(price.original)}</span>{' '}
-                                <Badge bg="danger">-{price.discountPercent}%</Badge>
+                                <span className="price-original price-original-large">{formatPrice(price.original)}</span>
+                                <span className="discount-tag">-{price.discountPercent}%</span>
                             </>
                         )}
                     </div>
@@ -193,9 +192,11 @@ export default function ProductDetailPage() {
 
                     <div className="d-flex flex-column flex-sm-row gap-2">
                         <Button variant="primary" size="lg" className="flex-grow-1" disabled={soldOut || adding} onClick={() => handleAddToCart(false)}>
+                            {adding && <Spinner size="sm" animation="border" role="status" aria-label="Đang thêm vào giỏ" />}
                             Thêm vào giỏ hàng
                         </Button>
                         <Button variant="outline-primary" size="lg" className="flex-grow-1" disabled={soldOut || adding} onClick={() => handleAddToCart(true)}>
+                            {adding && <Spinner size="sm" animation="border" role="status" aria-label="Đang xử lý" />}
                             Mua ngay
                         </Button>
                     </div>

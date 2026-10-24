@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -8,7 +8,9 @@ import { brandFromCategory } from '../utils/format';
 
 export default function AppNavbar() {
     const { user, loading, logout } = useAuth();
-    const { itemCount } = useCart();
+    const { itemCount, loaded } = useCart();
+    const previousCount = useRef(null);
+    const [pop, setPop] = useState(false);
     const navigate = useNavigate();
     const [brands, setBrands] = useState([]);
 
@@ -22,6 +24,20 @@ export default function AppNavbar() {
             active = false;
         };
     }, []);
+
+    // Huy hiệu giỏ hàng nảy một lần khi số lượng tăng (không nảy lúc vừa tải giỏ)
+    useEffect(() => {
+        if (!loaded) {
+            previousCount.current = null;
+            return undefined;
+        }
+        const increased = previousCount.current !== null && itemCount > previousCount.current;
+        previousCount.current = itemCount;
+        if (!increased) return undefined;
+        setPop(true);
+        const timer = setTimeout(() => setPop(false), 250);
+        return () => clearTimeout(timer);
+    }, [itemCount, loaded]);
 
     const handleLogout = async () => {
         try {
@@ -70,7 +86,7 @@ export default function AppNavbar() {
                         <Nav.Link as={NavLink} to="/cart">
                             Giỏ hàng
                             {itemCount > 0 && (
-                                <Badge bg="warning" text="dark" pill className="ms-1">
+                                <Badge bg="none" pill className={`cart-badge ${pop ? 'is-pop' : ''}`}>
                                     {itemCount}
                                     <span className="visually-hidden"> sản phẩm trong giỏ</span>
                                 </Badge>

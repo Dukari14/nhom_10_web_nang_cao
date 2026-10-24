@@ -21,7 +21,7 @@ export default function AppPagination({ page, totalPages, onChange }) {
     return (
         <Pagination className="justify-content-center flex-wrap mb-0" aria-label="Phân trang kết quả">
             <Pagination.Item aria-label="Trang trước" disabled={page <= 1} onClick={() => onChange(page - 1)}>
-                ‹
+                Trước
             </Pagination.Item>
             {getPageList(page, totalPages).map((item) =>
                 typeof item === 'string' ? (
@@ -39,7 +39,7 @@ export default function AppPagination({ page, totalPages, onChange }) {
                 ),
             )}
             <Pagination.Item aria-label="Trang sau" disabled={page >= totalPages} onClick={() => onChange(page + 1)}>
-                ›
+                Sau
             </Pagination.Item>
         </Pagination>
     );

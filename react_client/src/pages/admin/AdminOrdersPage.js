@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Card, Form, Modal, Table } from 'react-bootstrap';
+import { Alert, Button, Card, Form, Modal, Spinner, Table } from 'react-bootstrap';
 import AppPagination from '../../components/AppPagination';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import ErrorAlert from '../../components/ErrorAlert';
@@ -91,7 +91,7 @@ export default function AdminOrdersPage() {
                 </Alert>
             )}
 
-            <Card className="summary-card">
+            <Card>
                 <Card.Body>
                     {loading && !data && <PageSpinner label="Đang tải đơn hàng..." />}
 
@@ -167,6 +167,7 @@ export default function AdminOrdersPage() {
                                                                 onClick={() => handleSave(order)}
                                                                 aria-label={`Lưu trạng thái đơn #${order.order_id}`}
                                                             >
+                                                                {busy && <Spinner size="sm" animation="border" role="status" aria-label="Đang lưu" />}
                                                                 Lưu
                                                             </Button>
                                                         </div>
@@ -178,7 +179,7 @@ export default function AdminOrdersPage() {
                                 </tbody>
                             </Table>
                             <p className="text-secondary small">
-                                Luồng trạng thái: Chờ xác nhận → Đang xử lý → Đang giao → Đã giao; hủy được khi chưa giao.
+                                Luồng trạng thái: Chờ xác nhận, Đang xử lý, Đang giao, Đã giao; hủy được khi chưa giao.
                                 Tổng {data.total} đơn.
                             </p>
                             <AppPagination page={data.page} totalPages={data.totalPages} onChange={setPage} />

@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Alert, Badge, Button, Card, Col, Form, InputGroup, Row, Table } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import api from '../../api';
 import AppPagination from '../../components/AppPagination';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import ErrorAlert from '../../components/ErrorAlert';
 import PageSpinner from '../../components/PageSpinner';
+import StatusBadge from '../../components/StatusBadge';
 import { useAuth } from '../../context/AuthContext';
 import { ADMIN_PAGE_SIZE, ROLE_LABELS } from '../../utils/constants';
 import { getErrorMessages } from '../../utils/errors';
@@ -84,7 +85,7 @@ export default function AdminUsersPage() {
                 <h1 className="fs-3 fw-bold mb-0 me-auto">Quản lý tài khoản người dùng</h1>
             </div>
 
-            <Card className="summary-card mb-3">
+            <Card className="mb-3">
                 <Card.Body>
                     <Row className="g-2 align-items-end">
                         <Col md={6}>
@@ -154,7 +155,7 @@ export default function AdminUsersPage() {
                 </Alert>
             )}
 
-            <Card className="summary-card">
+            <Card>
                 <Card.Body>
                     {loading && !data && <PageSpinner label="Đang tải tài khoản..." />}
 
@@ -185,13 +186,13 @@ export default function AdminUsersPage() {
                                                 </td>
                                                 <td>{user.email}</td>
                                                 <td>
-                                                    <Badge bg={user.role === 'admin' ? 'primary' : 'secondary'}>{ROLE_LABELS[user.role]}</Badge>
+                                                    <StatusBadge tone={user.role === 'admin' ? 'blue' : 'gray'}>{ROLE_LABELS[user.role]}</StatusBadge>
                                                 </td>
                                                 <td className="text-nowrap">{formatDate(user.created_at)}</td>
                                                 <td>
-                                                    <Badge bg={user.is_active ? 'success' : 'danger'}>
+                                                    <StatusBadge tone={user.is_active ? 'green' : 'red'}>
                                                         {user.is_active ? 'Đang hoạt động' : 'Đã bị khóa'}
-                                                    </Badge>
+                                                    </StatusBadge>
                                                 </td>
                                                 <td className="text-nowrap">
                                                     <Button

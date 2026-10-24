@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
                     </p>
                     <Row xs={1} md={3} className="g-3">
                         <Col>
-                            <Card className="summary-card h-100">
+                            <Card className="h-100">
                                 <Card.Body>
                                     <div className="text-secondary small">Tổng doanh thu</div>
                                     <div className="stat-value">{formatPrice(data.totals.revenue)}</div>
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
                             </Card>
                         </Col>
                         <Col>
-                            <Card className="summary-card h-100">
+                            <Card className="h-100">
                                 <Card.Body>
                                     <div className="text-secondary small">Số điện thoại bán ra</div>
                                     <div className="stat-value">{data.totals.products_sold}</div>
@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
                             </Card>
                         </Col>
                         <Col>
-                            <Card className="summary-card h-100">
+                            <Card className="h-100">
                                 <Card.Body>
                                     <div className="text-secondary small">Số đơn hàng</div>
                                     <div className="stat-value">{data.totals.orders}</div>
@@ -105,7 +105,7 @@ export default function AdminDashboardPage() {
                         </Col>
                     </Row>
 
-                    <Card className="summary-card">
+                    <Card>
                         <Card.Body>
                             <h2 className="fs-5 fw-bold">Doanh thu theo {groupBy === 'month' ? 'tháng' : 'ngày'}</h2>
                             <BarChart
@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
                         </Card.Body>
                     </Card>
 
-                    <Card className="summary-card">
+                    <Card>
                         <Card.Body>
                             <h2 className="fs-5 fw-bold">Top 5 sản phẩm bán chạy</h2>
                             {data.top_products.length === 0 ? (

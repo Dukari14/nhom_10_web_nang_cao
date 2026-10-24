@@ -25,12 +25,13 @@ export const ORDER_STATUS_LABELS = {
 // Thứ tự các bước của một đơn bình thường (đơn bị hủy không nằm trong dãy này)
 export const ORDER_STATUS_STEPS = ['pending', 'confirmed', 'shipping', 'delivered'];
 
-export const ORDER_STATUS_VARIANTS = {
-    pending: 'warning',
-    confirmed: 'info',
-    shipping: 'primary',
-    delivered: 'success',
-    cancelled: 'secondary',
+// Tông màu huy hiệu (định nghĩa ở index.css): chờ xác nhận xám, đang xử lý xanh dương, đang giao vàng, đã giao xanh lá, đã hủy đỏ
+export const ORDER_STATUS_TONES = {
+    pending: 'gray',
+    confirmed: 'blue',
+    shipping: 'yellow',
+    delivered: 'green',
+    cancelled: 'red',
 };
 
 export const PAYMENT_STATUS_LABELS = {
@@ -39,10 +40,10 @@ export const PAYMENT_STATUS_LABELS = {
     failed: 'Thất bại',
 };
 
-export const PAYMENT_STATUS_VARIANTS = {
-    pending: 'warning',
-    completed: 'success',
-    failed: 'danger',
+export const PAYMENT_STATUS_TONES = {
+    pending: 'gray',
+    completed: 'green',
+    failed: 'red',
 };
 
 export const PAYMENT_METHOD_LABELS = {

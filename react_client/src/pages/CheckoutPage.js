@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
+import EmptyState from '../components/EmptyState';
 import ErrorAlert from '../components/ErrorAlert';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -79,12 +80,7 @@ export default function CheckoutPage() {
             <Container className="py-4">
                 <h1 className="fs-3 fw-bold mb-3">Thanh toán</h1>
                 <ErrorAlert messages={serverErrors} />
-                <Alert variant="info">
-                    <p className="mb-2">Giỏ hàng của bạn đang trống nên chưa thể đặt hàng.</p>
-                    <Button as={Link} to="/products" variant="primary">
-                        Xem điện thoại
-                    </Button>
-                </Alert>
+                <EmptyState message="Giỏ hàng của bạn đang trống nên chưa thể đặt hàng." actionLabel="Xem điện thoại" to="/products" />
             </Container>
         );
     }
@@ -97,7 +93,7 @@ export default function CheckoutPage() {
             <Form noValidate onSubmit={handleSubmit}>
                 <Row className="g-4">
                     <Col lg={8} className="d-flex flex-column gap-3">
-                        <Card className="summary-card">
+                        <Card>
                             <Card.Body>
                                 <h2 className="fs-5 fw-bold mb-3">1. Thông tin giao hàng</h2>
                                 <Row className="g-3">
@@ -142,7 +138,7 @@ export default function CheckoutPage() {
                             </Card.Body>
                         </Card>
 
-                        <Card className="summary-card">
+                        <Card>
                             <Card.Body>
                                 <fieldset>
                                     <legend className="fs-5 fw-bold mb-3">2. Phương thức thanh toán</legend>
@@ -179,7 +175,7 @@ export default function CheckoutPage() {
                     </Col>
 
                     <Col lg={4}>
-                        <Card className="summary-card">
+                        <Card>
                             <Card.Body className="d-flex flex-column gap-2">
                                 <h2 className="fs-5 fw-bold">Đơn hàng của bạn</h2>
                                 {items.map((item) => (
@@ -206,7 +202,7 @@ export default function CheckoutPage() {
                                     )}
                                 </Button>
                                 <Link to="/cart" className="text-center text-decoration-none">
-                                    ‹ Quay lại giỏ hàng
+                                    Quay lại giỏ hàng
                                 </Link>
                                 <div className="text-secondary small">
                                     Bằng việc đặt hàng, bạn đồng ý với điều khoản của cửa hàng.

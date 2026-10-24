@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Button, Card, Col, Container, Form, Row, Spinner } from 'react-bootstrap';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { Button, Card, Container, Form, Spinner } from 'react-bootstrap';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import ErrorAlert from '../components/ErrorAlert';
+import PageSpinner from '../components/PageSpinner';
 import { useAuth } from '../context/AuthContext';
 import { getErrorMessages } from '../utils/errors';
 import useDocumentTitle from '../utils/useDocumentTitle';
@@ -23,7 +24,7 @@ function validateRegister({ full_name, email, password }) {
     return errors;
 }
 
-// Điều hướng sau khi đăng nhập: admin vào /admin, khách quay lại trang đang xem
+// Điều hướng sau khi đăng nhập: admin vào /admin, khách quay lại trang đang xem (state.from)
 function useAfterLogin() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -52,7 +53,21 @@ function Field({ id, label, type = 'text', value, onChange, error, placeholder, 
     );
 }
 
-function LoginForm({ autoFocus }) {
+// Liên kết sang trang còn lại, giữ nguyên state.from để đăng nhập xong vẫn quay về trang đang xem
+function SwitchLink({ question, label, to }) {
+    const location = useLocation();
+    return (
+        <p className="text-center mt-3 mb-0">
+            {question}{' '}
+            <Link to={to} state={location.state} className="fw-semibold">
+                {label}
+            </Link>
+        </p>
+    );
+}
+
+// attemptRef cho AuthPage biết form đang tự xử lý đăng nhập, để không chuyển hướng chen ngang
+function LoginForm({ attemptRef }) {
     const { login } = useAuth();
     const afterLogin = useAfterLogin();
     const [values, setValues] = useState({ email: '', password: '' });
@@ -70,16 +85,18 @@ function LoginForm({ autoFocus }) {
         if (Object.keys(errors).length > 0) return;
 
         setSubmitting(true);
+        attemptRef.current = true;
         try {
             afterLogin(await login(values.email.trim(), values.password));
         } catch (error) {
+            attemptRef.current = false;
             setServerErrors(getErrorMessages(error));
             setSubmitting(false);
         }
     };
 
     return (
-        <Card className="h-100">
+        <Card>
             <Card.Body className="p-4">
                 <h1 className="fs-4 fw-bold mb-3">Đăng nhập</h1>
                 <ErrorAlert messages={serverErrors} onClose={() => setServerErrors([])} />
@@ -93,7 +110,7 @@ function LoginForm({ autoFocus }) {
                         error={fieldErrors.email}
                         placeholder="email@vidu.com"
                         autoComplete="email"
-                        autoFocus={autoFocus}
+                        autoFocus
                     />
                     <Field
                         id="login-password"
@@ -109,15 +126,13 @@ function LoginForm({ autoFocus }) {
                         {submitting ? <Spinner size="sm" animation="border" role="status" aria-label="Đang đăng nhập" /> : 'Đăng nhập'}
                     </Button>
                 </Form>
-                <p className="text-secondary small mt-3 mb-0">
-                    Tài khoản quản trị dùng chung form này; hệ thống tự chuyển đến trang quản lý.
-                </p>
+                <SwitchLink question="Chưa có tài khoản?" label="Đăng ký" to="/register" />
             </Card.Body>
         </Card>
     );
 }
 
-function RegisterForm({ autoFocus }) {
+function RegisterForm({ attemptRef }) {
     const { register } = useAuth();
     const afterLogin = useAfterLogin();
     const [values, setValues] = useState({ full_name: '', email: '', password: '' });
@@ -135,6 +150,7 @@ function RegisterForm({ autoFocus }) {
         if (Object.keys(errors).length > 0) return;
 
         setSubmitting(true);
+        attemptRef.current = true;
         try {
             afterLogin(
                 await register({
@@ -144,15 +160,16 @@ function RegisterForm({ autoFocus }) {
                 }),
             );
         } catch (error) {
+            attemptRef.current = false;
             setServerErrors(getErrorMessages(error));
             setSubmitting(false);
         }
     };
 
     return (
-        <Card className="h-100">
+        <Card>
             <Card.Body className="p-4">
-                <h2 className="fs-4 fw-bold mb-3">Tạo tài khoản</h2>
+                <h1 className="fs-4 fw-bold mb-3">Tạo tài khoản</h1>
                 <ErrorAlert messages={serverErrors} onClose={() => setServerErrors([])} />
                 <Form noValidate onSubmit={handleSubmit}>
                     <Field
@@ -163,7 +180,7 @@ function RegisterForm({ autoFocus }) {
                         error={fieldErrors.full_name}
                         placeholder="Nguyễn Văn A"
                         autoComplete="name"
-                        autoFocus={autoFocus}
+                        autoFocus
                     />
                     <Field
                         id="register-email"
@@ -189,45 +206,39 @@ function RegisterForm({ autoFocus }) {
                         {submitting ? <Spinner size="sm" animation="border" role="status" aria-label="Đang đăng ký" /> : 'Đăng ký'}
                     </Button>
                 </Form>
+                <SwitchLink question="Đã có tài khoản?" label="Đăng nhập" to="/login" />
             </Card.Body>
         </Card>
     );
 }
 
-// Hai route /login và /register dùng chung một trang có cả hai form (theo wireframe);
-// mode quyết định ô nhập nào được focus sẵn.
+// /login chỉ có form đăng nhập, /register chỉ có form đăng ký (mode quyết định form nào hiện).
 export default function AuthPage({ mode }) {
     const { user, loading } = useAuth();
-    const location = useLocation();
-    useDocumentTitle(mode === 'register' ? 'Đăng ký' : 'Đăng nhập');
+    const attemptRef = useRef(false);
+    const isRegister = mode === 'register';
+    useDocumentTitle(isRegister ? 'Đăng ký' : 'Đăng nhập');
 
     if (loading) {
-        return (
-            <Container className="text-center py-5">
-                <Spinner animation="border" role="status" variant="primary">
-                    <span className="visually-hidden">Đang kiểm tra phiên đăng nhập...</span>
-                </Spinner>
-            </Container>
-        );
+        return <PageSpinner label="Đang kiểm tra phiên đăng nhập..." />;
     }
 
-    // Đã đăng nhập thì không cần ở lại trang này
     if (user) {
-        const from = location.state && location.state.from;
-        return <Navigate to={user.role === 'admin' ? '/admin' : from || '/'} replace />;
+        // Vừa đăng nhập hoặc đăng ký xong bằng form này: để form tự chuyển về trang đang xem hoặc /admin
+        if (attemptRef.current) return <PageSpinner label="Đang chuyển trang..." />;
+        // Đã đăng nhập từ trước mà vào /login hay /register thì về trang chủ
+        return <Navigate to="/" replace />;
     }
 
+    // key theo mode: chuyển giữa hai trang thì form được dựng lại, ô nhập và thông báo lỗi cũ bị xóa
     return (
-        <div className="auth-page flex-grow-1 py-4 py-md-5">
-            <Container>
-                <Row className="g-4 justify-content-center">
-                    <Col md={6} lg={5}>
-                        <LoginForm autoFocus={mode !== 'register'} />
-                    </Col>
-                    <Col md={6} lg={5}>
-                        <RegisterForm autoFocus={mode === 'register'} />
-                    </Col>
-                </Row>
+        <div className="auth-page flex-grow-1 d-flex align-items-center py-4 py-md-5">
+            <Container className="auth-container">
+                {isRegister ? (
+                    <RegisterForm key="register" attemptRef={attemptRef} />
+                ) : (
+                    <LoginForm key="login" attemptRef={attemptRef} />
+                )}
             </Container>
         </div>
     );

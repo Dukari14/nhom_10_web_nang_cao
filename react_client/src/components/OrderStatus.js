@@ -1,29 +1,21 @@
-import { Badge } from 'react-bootstrap';
+import StatusBadge from './StatusBadge';
 import {
     ORDER_STATUS_LABELS,
     ORDER_STATUS_STEPS,
-    ORDER_STATUS_VARIANTS,
+    ORDER_STATUS_TONES,
     PAYMENT_STATUS_LABELS,
-    PAYMENT_STATUS_VARIANTS,
+    PAYMENT_STATUS_TONES,
 } from '../utils/constants';
 
 export function OrderStatusBadge({ status }) {
-    return (
-        <Badge bg={ORDER_STATUS_VARIANTS[status] || 'secondary'} text={status === 'pending' ? 'dark' : undefined}>
-            {ORDER_STATUS_LABELS[status] || status}
-        </Badge>
-    );
+    return <StatusBadge tone={ORDER_STATUS_TONES[status] || 'gray'}>{ORDER_STATUS_LABELS[status] || status}</StatusBadge>;
 }
 
 export function PaymentStatusBadge({ status }) {
-    return (
-        <Badge bg={PAYMENT_STATUS_VARIANTS[status] || 'secondary'} text={status === 'pending' ? 'dark' : undefined}>
-            {PAYMENT_STATUS_LABELS[status] || status}
-        </Badge>
-    );
+    return <StatusBadge tone={PAYMENT_STATUS_TONES[status] || 'gray'}>{PAYMENT_STATUS_LABELS[status] || status}</StatusBadge>;
 }
 
-// Thanh tiến trình: Chờ xác nhận → Đang xử lý → Đang giao → Đã giao. Đơn đã hủy không hiện thanh này.
+// Thanh tiến trình theo thứ tự: Chờ xác nhận, Đang xử lý, Đang giao, Đã giao. Đơn đã hủy không hiện thanh này.
 export function OrderProgress({ status }) {
     if (status === 'cancelled') return null;
     const current = ORDER_STATUS_STEPS.indexOf(status);

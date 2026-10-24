@@ -7,6 +7,7 @@ import { Category } from '../categories/category.entity';
 import { Product } from '../products/product.entity';
 import { slugify } from '../products/products.service';
 import { SALT_ROUNDS } from '../auth/auth.constants';
+import { seedImageUrl } from './seed-images';
 
 const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? 'admin@phoneshop.vn';
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? 'Admin@12345';
@@ -69,10 +70,22 @@ async function seed(): Promise<void> {
     }
 
     let addedProducts = 0;
+    let filledImages = 0;
     for (const phone of PHONES) {
       const name = `${phone.model} ${phone.storage}`;
       const slug = slugify(`${name} ${phone.color}`);
-      if (await productRepo.findOneBy({ slug })) continue;
+      const image = seedImageUrl(name);
+      const existing = await productRepo.findOneBy({ slug });
+      if (existing) {
+        // Sản phẩm đã có: chỉ điền ảnh khi còn đúng tên gốc và chưa có ảnh,
+        // không ghi đè dữ liệu admin đã sửa (đổi tên, đổi ảnh)
+        if (image && existing.name === name && !existing.image_url) {
+          existing.image_url = image;
+          await productRepo.save(existing);
+          filledImages++;
+        }
+        continue;
+      }
 
       await productRepo.save(
         productRepo.create({
@@ -87,7 +100,7 @@ async function seed(): Promise<void> {
           price: String(phone.price),
           sale_price: phone.sale_price === null ? null : String(phone.sale_price),
           stock: phone.stock,
-          image_url: null,
+          image_url: image,
           is_active: true,
           category: categories.get(phone.brand),
         }),
@@ -108,7 +121,7 @@ async function seed(): Promise<void> {
       adminCreated = true;
     }
 
-    console.log(`Seed xong: thêm ${addedProducts}/${PHONES.length} sản phẩm.`);
+    console.log(`Seed xong: thêm ${addedProducts}/${PHONES.length} sản phẩm, điền ảnh cho ${filledImages} sản phẩm đã có.`);
     console.log(
       adminCreated
         ? `Đã tạo tài khoản admin: ${ADMIN_EMAIL} (mật khẩu mặc định trong seed.ts, hãy đổi sau khi đăng nhập).`

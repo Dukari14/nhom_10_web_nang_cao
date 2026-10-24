@@ -1,111 +1,399 @@
-/* Màu chủ đạo theo wireframe: xanh đậm #003B95, nhấn #006CE4, viền tìm kiếm vàng #FEBB02 */
+/* ===== Biến màu và kích thước dùng chung ===== */
 :root {
-    --brand-dark: #003b95;
-    --brand-accent: #006ce4;
-    --brand-yellow: #febb02;
-    --price-red: #b42318;
-    --bs-primary: #006ce4;
+    --navy: #003b95;
+    --blue: #006ce4;
+    --yellow: #febb02;
+    --bg: #f2f4f6;
+    --surface: #ffffff;
+    --ink: #1f2933;
+    --muted: #4b5563;
+    --price-sale: #c8102e;
+    --ok: #137333;
+    --danger: #b42318;
+    /* Màu phụ suy ra từ bảng màu trên */
+    --line: #d6dbe0;
+    --blue-hover: #0057b8;
+    --blue-active: #004a9c;
+    --radius-control: 4px;
+    --radius-card: 8px;
+    --tap-size: 44px;
+
+    /* Nối bảng màu vào Bootstrap để mọi thành phần react-bootstrap dùng chung */
+    --bs-font-sans-serif: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 0.9375rem;
+    --bs-body-color: var(--ink);
+    --bs-body-color-rgb: 31, 41, 51;
+    --bs-body-bg: var(--surface);
+    --bs-primary: var(--blue);
     --bs-primary-rgb: 0, 108, 228;
-    --bs-link-color: #006ce4;
+    --bs-secondary-rgb: 75, 85, 99;
+    --bs-success: var(--ok);
+    --bs-success-rgb: 19, 115, 51;
+    --bs-danger: var(--danger);
+    --bs-danger-rgb: 180, 35, 24;
+    --bs-link-color: var(--blue);
     --bs-link-color-rgb: 0, 108, 228;
-    --bs-link-hover-color: #003b95;
+    --bs-link-hover-color: var(--navy);
     --bs-link-hover-color-rgb: 0, 59, 149;
-    --bs-body-color: #1f2933;
+    --bs-border-color: var(--line);
+    --bs-border-radius: var(--radius-control);
 }
 
 body {
-    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-    font-size: 14px;
-    background: #fff;
+    font-family: var(--bs-body-font-family);
+    background: var(--surface);
+    color: var(--ink);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 800;
+}
+
+.fw-bold {
+    font-weight: 800 !important;
+}
+
+.fw-semibold,
+b,
+strong {
+    font-weight: 600 !important;
+}
+
+/* ===== Nền xanh đậm dùng chung ===== */
+.app-navbar,
+.hero,
+.admin-sidebar {
+    background: var(--navy);
+    color: var(--surface);
+}
+
+.hero-subtitle {
+    color: color-mix(in srgb, var(--surface) 85%, transparent);
+}
+
+/* ===== Nút: một kiểu chính (xanh), một kiểu phụ (viền) ===== */
+.btn {
+    --bs-btn-border-radius: var(--radius-control);
+    --bs-btn-disabled-opacity: 0.5;
+    min-height: var(--tap-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.btn:disabled,
+.btn.disabled {
+    cursor: not-allowed;
 }
 
 .btn-primary {
-    --bs-btn-bg: #006ce4;
-    --bs-btn-border-color: #006ce4;
-    --bs-btn-hover-bg: #0057b8;
-    --bs-btn-hover-border-color: #0057b8;
-    --bs-btn-active-bg: #004a9c;
-    --bs-btn-active-border-color: #004a9c;
-    --bs-btn-disabled-bg: #006ce4;
-    --bs-btn-disabled-border-color: #006ce4;
-    --bs-btn-focus-shadow-rgb: 0, 108, 228;
-    font-weight: 600;
+    --bs-btn-bg: var(--blue);
+    --bs-btn-border-color: var(--blue);
+    --bs-btn-hover-bg: var(--blue-hover);
+    --bs-btn-hover-border-color: var(--blue-hover);
+    --bs-btn-active-bg: var(--blue-active);
+    --bs-btn-active-border-color: var(--blue-active);
+    --bs-btn-disabled-bg: var(--blue);
+    --bs-btn-disabled-border-color: var(--blue);
 }
 
 .btn-outline-primary {
-    --bs-btn-color: #006ce4;
-    --bs-btn-border-color: #006ce4;
-    --bs-btn-hover-bg: #006ce4;
-    --bs-btn-hover-border-color: #006ce4;
-    --bs-btn-active-bg: #004a9c;
-    --bs-btn-active-border-color: #004a9c;
-    --bs-btn-disabled-color: #006ce4;
-    --bs-btn-disabled-border-color: #006ce4;
+    --bs-btn-color: var(--blue);
+    --bs-btn-border-color: var(--blue);
+    --bs-btn-hover-bg: var(--blue);
+    --bs-btn-hover-border-color: var(--blue);
+    --bs-btn-active-bg: var(--blue-active);
+    --bs-btn-active-border-color: var(--blue-active);
+    --bs-btn-disabled-color: var(--blue);
+    --bs-btn-disabled-border-color: var(--blue);
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: var(--muted);
+    --bs-btn-border-color: var(--muted);
+    --bs-btn-hover-bg: var(--muted);
+    --bs-btn-hover-border-color: var(--muted);
+    --bs-btn-active-bg: var(--ink);
+    --bs-btn-active-border-color: var(--ink);
+    --bs-btn-disabled-color: var(--muted);
+    --bs-btn-disabled-border-color: var(--muted);
+}
+
+.btn-outline-danger,
+.btn-danger {
+    --bs-btn-color: var(--danger);
+    --bs-btn-border-color: var(--danger);
+    --bs-btn-hover-bg: var(--danger);
+    --bs-btn-hover-border-color: var(--danger);
+    --bs-btn-active-bg: var(--danger);
+    --bs-btn-active-border-color: var(--danger);
+    --bs-btn-disabled-color: var(--danger);
+    --bs-btn-disabled-border-color: var(--danger);
+}
+
+.btn-danger {
+    --bs-btn-color: var(--surface);
+    --bs-btn-bg: var(--danger);
+    --bs-btn-disabled-bg: var(--danger);
+    --bs-btn-disabled-color: var(--surface);
+}
+
+.btn-outline-success {
+    --bs-btn-color: var(--ok);
+    --bs-btn-border-color: var(--ok);
+    --bs-btn-hover-bg: var(--ok);
+    --bs-btn-hover-border-color: var(--ok);
+    --bs-btn-active-bg: var(--ok);
+    --bs-btn-active-border-color: var(--ok);
+    --bs-btn-disabled-color: var(--ok);
+    --bs-btn-disabled-border-color: var(--ok);
+}
+
+.btn-outline-light {
+    --bs-btn-color: var(--surface);
+    --bs-btn-border-color: var(--surface);
+    --bs-btn-hover-bg: var(--surface);
+    --bs-btn-hover-color: var(--navy);
+    --bs-btn-active-bg: var(--surface);
+    --bs-btn-active-color: var(--navy);
+}
+
+/* ===== Viền focus rõ: 2px màu xanh, cách 2px ===== */
+a:focus-visible,
+.btn:focus-visible,
+.nav-link:focus-visible,
+.page-link:focus-visible,
+.form-check-input:focus-visible,
+.navbar-toggler:focus-visible,
+.btn-close:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--blue);
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+/* Trên nền xanh đậm viền xanh khó thấy nên đổi sang trắng */
+.app-navbar a:focus-visible,
+.app-navbar .btn:focus-visible,
+.app-navbar .navbar-toggler:focus-visible,
+.admin-sidebar a:focus-visible,
+.admin-sidebar .btn:focus-visible {
+    outline-color: var(--surface);
+}
+
+/* ===== Ô nhập, thẻ, hộp thoại ===== */
+.form-control,
+.form-select,
+.input-group-text {
+    border-radius: var(--radius-control);
+    min-height: var(--tap-size);
+    border-color: var(--muted);
+}
+
+.form-check-label {
+    padding-block: 0.5rem;
+}
+
+.card,
+.alert,
+.modal-content,
+.dropdown-menu {
+    border-radius: var(--radius-card);
+}
+
+.card {
+    --bs-card-border-radius: var(--radius-card);
+    --bs-card-inner-border-radius: calc(var(--radius-card) - 1px);
+    --bs-card-border-color: var(--line);
+    box-shadow: none;
+}
+
+/* ===== Huy hiệu tròn hoàn toàn, màu theo ý nghĩa ===== */
+.badge {
+    border-radius: 999px;
     font-weight: 600;
+    font-size: 0.8125rem;
+    padding: 0.4em 0.8em;
+    font-variant-numeric: tabular-nums;
 }
 
-.form-check-input:checked {
-    background-color: #006ce4;
-    border-color: #006ce4;
+.tone-gray {
+    background: var(--line);
+    color: var(--ink);
 }
 
-.page-link {
-    --bs-pagination-color: #006ce4;
-    --bs-pagination-hover-color: #003b95;
+.tone-blue {
+    background: color-mix(in srgb, var(--blue) 14%, transparent);
+    color: var(--navy);
 }
 
-.page-item.active .page-link {
-    --bs-pagination-active-bg: #006ce4;
-    --bs-pagination-active-border-color: #006ce4;
+.tone-yellow {
+    background: var(--yellow);
+    color: var(--ink);
 }
 
-/* Thanh điều hướng */
+.tone-green {
+    background: color-mix(in srgb, var(--ok) 10%, transparent);
+    color: var(--ok);
+}
+
+.tone-red {
+    background: color-mix(in srgb, var(--danger) 10%, transparent);
+    color: var(--danger);
+}
+
+.tone-dark {
+    background: var(--ink);
+    color: var(--surface);
+}
+
+/* Nhãn giảm giá: mảnh vàng cắt chéo hai góc như thẻ giá cửa hàng */
+.discount-tag {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    padding: 0.3rem 0.8rem;
+    font-variant-numeric: tabular-nums;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+/* ===== Giá ===== */
+.price-current,
+.price-original,
+.stat-value,
+.table td.text-end {
+    font-variant-numeric: tabular-nums;
+}
+
+.price-current {
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+
+.price-current.is-sale {
+    color: var(--price-sale);
+}
+
+.price-current.price-large {
+    font-size: 2rem;
+}
+
+.price-original {
+    color: var(--muted);
+    text-decoration: line-through;
+    font-size: 0.8125rem;
+    font-weight: 400;
+}
+
+.price-original.price-original-large {
+    font-size: 1rem;
+}
+
+/* ===== Thanh điều hướng ===== */
 .app-navbar {
-    background: var(--brand-dark);
     min-height: 64px;
 }
 
 .app-navbar .navbar-brand {
     font-weight: 800;
-    font-size: 22px;
+    font-size: 1.375rem;
+    color: var(--surface);
 }
 
-.app-navbar .btn-outline-light {
-    --bs-btn-hover-color: var(--brand-dark);
+.app-navbar .nav-link,
+.app-navbar .navbar-text {
+    color: color-mix(in srgb, var(--surface) 85%, transparent);
 }
 
-/* Dải xanh chứa thanh tìm kiếm */
-.hero {
-    background: var(--brand-dark);
-    color: #fff;
+.app-navbar .nav-link {
+    min-height: var(--tap-size);
+    display: flex;
+    align-items: center;
+    padding-inline: 0.75rem;
+    border-bottom: 3px solid transparent;
 }
 
-.hero-subtitle {
-    color: #dbe7ff;
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.show {
+    color: var(--surface);
 }
 
+.app-navbar .nav-link.active {
+    color: var(--surface);
+    border-bottom-color: var(--yellow);
+}
+
+.cart-badge {
+    background: var(--yellow);
+    color: var(--ink);
+    min-width: 1.5rem;
+    margin-left: 0.4rem;
+}
+
+.cart-badge.is-pop {
+    animation: cart-pop 200ms ease-out;
+}
+
+@keyframes cart-pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.35);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cart-badge.is-pop {
+        animation: none;
+    }
+}
+
+/* ===== Tìm kiếm ===== */
 .search-bar {
-    background: var(--brand-yellow);
-    border-radius: 8px;
+    background: var(--yellow);
+    border-radius: var(--radius-card);
     padding: 4px;
 }
 
 .search-bar .form-control,
 .search-bar .form-select {
     border: 0;
-    border-radius: 4px;
 }
 
-/* Thẻ sản phẩm */
+/* ===== Thẻ sản phẩm: viền mảnh, không đổ bóng, rê chuột chỉ đổi màu viền ===== */
 .product-card {
-    border-color: #d6dbe0;
-    border-radius: 8px;
-    transition: box-shadow 0.15s ease;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: none;
+    transition: border-color 0.15s ease;
 }
 
 .product-card:hover,
 .product-card:focus-within {
-    box-shadow: 0 4px 14px rgba(0, 59, 149, 0.15);
+    border-color: var(--blue);
 }
 
 .product-card a {
@@ -118,7 +406,7 @@ body {
 }
 
 .product-name {
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.35;
     /* Tên dài tối đa 2 dòng để các thẻ cao bằng nhau */
@@ -129,92 +417,122 @@ body {
     min-height: 2.7em;
 }
 
-.price-current {
-    color: var(--price-red);
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.price-current.price-large {
-    font-size: 26px;
-}
-
-.price-original {
-    color: #6b7280;
-    text-decoration: line-through;
-    font-size: 13px;
-}
-
-/* Khung ảnh sản phẩm: ảnh thật hoặc ô xám có chữ cái đầu khi chưa có ảnh */
+/* Khung ảnh vuông 1:1; chưa có ảnh thì ô xám có chữ cái đầu */
 .product-image {
-    background: #e5e8ec;
-    border-radius: 6px;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    background: var(--bg);
+    border-radius: var(--radius-control);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    color: #6b7280;
-    font-weight: 700;
-    width: 100%;
+    color: var(--muted);
+    font-weight: 800;
 }
 
 .product-image img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    background: #fff;
+    background: var(--surface);
+}
+
+.product-image-xs {
+    max-width: 72px;
+    font-size: 1.75rem;
 }
 
 .product-image-sm {
-    height: 140px;
-    font-size: 48px;
+    font-size: 3.5rem;
 }
 
 .product-image-lg {
-    height: 360px;
-    font-size: 120px;
+    max-width: 560px;
+    font-size: 8rem;
 }
 
-@media (max-width: 575.98px) {
-    .product-image-lg {
-        height: 240px;
-    }
-}
-
-/* Chip dung lượng, màu sắc ở trang chi tiết */
+/* ===== Chi tiết sản phẩm ===== */
 .spec-chip {
-    border: 2px solid #006ce4;
-    border-radius: 6px;
-    background: #e8f1fd;
-    color: #003b95;
-    font-size: 13px;
+    border: 2px solid var(--blue);
+    border-radius: var(--radius-control);
+    background: color-mix(in srgb, var(--blue) 8%, transparent);
+    color: var(--navy);
+    font-size: 0.8125rem;
     font-weight: 600;
-    padding: 6px 14px;
+    padding: 0.4rem 0.9rem;
     display: inline-block;
+}
+
+/* Bảng cấu hình: chỉ kẻ ngang mảnh, không sọc đậm */
+.spec-table {
+    --bs-table-bg: transparent;
+}
+
+.spec-table th,
+.spec-table td {
+    border-bottom: 1px solid var(--line);
+    padding: 0.75rem 0.5rem;
 }
 
 .spec-table th {
     width: 200px;
-    color: #4b5563;
+    color: var(--muted);
     font-weight: 400;
 }
 
+/* ===== Trang, chân trang, trạng thái rỗng ===== */
 .site-footer {
-    background: #f2f4f6;
-    color: #4b5563;
-    font-size: 12px;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 0.8125rem;
 }
 
 .auth-page {
-    background: #f2f4f6;
+    background: var(--bg);
 }
 
-/* Giỏ hàng, đơn hàng */
-.product-image-xs {
-    height: 72px;
-    font-size: 28px;
+.empty-state {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    padding: 2rem 1rem;
+    text-align: center;
 }
 
+/* ===== Phân trang ===== */
+.pagination {
+    --bs-pagination-color: var(--blue);
+    --bs-pagination-hover-color: var(--navy);
+    --bs-pagination-active-bg: var(--blue);
+    --bs-pagination-active-border-color: var(--blue);
+    --bs-pagination-border-radius: var(--radius-control);
+    gap: 4px;
+}
+
+.page-link {
+    min-width: var(--tap-size);
+    min-height: var(--tap-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-control) !important;
+    margin-left: 0 !important;
+}
+
+/* ===== Lọc đơn bằng tab ===== */
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--blue);
+    --bs-nav-pills-border-radius: var(--radius-control);
+}
+
+.nav-pills .nav-link {
+    min-height: var(--tap-size);
+    display: flex;
+    align-items: center;
+}
+
+/* ===== Tiến trình đơn hàng ===== */
 .order-steps {
     display: flex;
     list-style: none;
@@ -226,8 +544,8 @@ body {
     flex: 1;
     text-align: center;
     position: relative;
-    font-size: 12px;
-    color: #6b7280;
+    font-size: 0.8125rem;
+    color: var(--muted);
 }
 
 .order-steps li::before {
@@ -237,7 +555,7 @@ body {
     left: -50%;
     width: 100%;
     height: 2px;
-    background: #d6dbe0;
+    background: var(--line);
     z-index: 0;
 }
 
@@ -254,39 +572,29 @@ body {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #e5e8ec;
-    color: #4b5563;
-    font-weight: 700;
+    background: var(--line);
+    color: var(--ink);
+    font-weight: 600;
     margin-bottom: 4px;
 }
 
 .order-steps li.is-done .step-dot,
 .order-steps li.is-current .step-dot {
-    background: #006ce4;
-    color: #fff;
+    background: var(--blue);
+    color: var(--surface);
 }
 
 .order-steps li.is-done::before,
 .order-steps li.is-current::before {
-    background: #006ce4;
+    background: var(--blue);
 }
 
 .order-steps li.is-current {
-    color: #003b95;
+    color: var(--navy);
     font-weight: 600;
 }
 
-.summary-card {
-    border-color: #d6dbe0;
-    border-radius: 8px;
-}
-
-/* Khu quản trị */
-.admin-sidebar {
-    background: var(--brand-dark);
-    color: #fff;
-}
-
+/* ===== Khu quản trị ===== */
 @media (min-width: 992px) {
     .admin-sidebar {
         width: 230px;
@@ -298,24 +606,27 @@ body {
 }
 
 .admin-sidebar .nav-link {
-    color: #fff;
-    border-radius: 4px;
-    padding: 10px 12px;
+    color: var(--surface);
+    border-radius: var(--radius-control);
+    min-height: var(--tap-size);
+    display: flex;
+    align-items: center;
+    padding-inline: 0.75rem;
 }
 
 .admin-sidebar .nav-link:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--surface) 12%, transparent);
 }
 
 .admin-sidebar .nav-link.active {
-    background: var(--brand-accent);
+    background: var(--blue);
     font-weight: 600;
 }
 
 .stat-value {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--brand-dark);
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--navy);
 }
 
 /* Biểu đồ cột doanh thu */
@@ -324,24 +635,35 @@ body {
     align-items: flex-end;
     gap: 3px;
     height: 200px;
-    border-bottom: 2px solid #8a95a1;
+    border-bottom: 2px solid var(--muted);
 }
 
 .bar-chart-bar {
     flex: 1 1 0;
     min-width: 3px;
-    background: var(--brand-accent);
+    background: var(--blue);
     border-radius: 3px 3px 0 0;
 }
 
 .bar-chart-bar:hover {
-    background: var(--brand-dark);
+    background: var(--navy);
 }
 
 .bar-chart-bar.is-empty {
-    background: #d6dbe0;
+    background: var(--line);
 }
 
 .bar-chart-scroll {
     overflow-x: auto;
+}
+
+/* Nút mở menu trên điện thoại cũng đủ lớn để bấm */
+.navbar-toggler {
+    min-width: var(--tap-size);
+    min-height: var(--tap-size);
+}
+
+/* Trang đăng nhập và đăng ký: một form ở giữa, rộng tối đa 440px */
+.container.auth-container {
+    max-width: 440px;
 }

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Alert, Badge, Button, Card, Col, Form, InputGroup, Row, Table } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import api from '../../api';
 import AppPagination from '../../components/AppPagination';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import ProductForm from '../../components/admin/ProductForm';
 import ErrorAlert from '../../components/ErrorAlert';
 import PageSpinner from '../../components/PageSpinner';
+import StatusBadge from '../../components/StatusBadge';
 import { ADMIN_PAGE_SIZE } from '../../utils/constants';
 import { getErrorMessages } from '../../utils/errors';
 import { formatPrice, getDisplayName, getPriceInfo } from '../../utils/format';
@@ -106,7 +107,7 @@ export default function AdminProductsPage() {
 
             <Row className="g-3 align-items-start">
                 <Col xl={7}>
-                    <Card className="summary-card">
+                    <Card>
                         <Card.Body>
                             <Form onSubmit={handleSearch} role="search" className="mb-3">
                                 <InputGroup>
@@ -161,8 +162,8 @@ export default function AdminProductsPage() {
                                                         <td>
                                                             <div>{getDisplayName(product)}</div>
                                                             <div className="small text-secondary">
-                                                                {[product.color, product.category && product.category.name].filter(Boolean).join(' · ')}{' '}
-                                                                {!product.is_active && <Badge bg="secondary">Đang ẩn</Badge>}
+                                                                {[product.color, product.category && product.category.name].filter(Boolean).join(', ')}{' '}
+                                                                {!product.is_active && <StatusBadge tone="gray">Đang ẩn</StatusBadge>}
                                                             </div>
                                                         </td>
                                                         <td className="text-end text-nowrap">

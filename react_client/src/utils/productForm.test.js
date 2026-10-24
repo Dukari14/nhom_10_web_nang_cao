@@ -1,4 +1,4 @@
-import { EMPTY_PRODUCT_FORM, formToPayload, productToForm, validateProductForm } from './productForm';
+import { EMPTY_PRODUCT_FORM, formToPayload, isValidImagePath, productToForm, validateProductForm } from './productForm';
 
 const valid = { ...EMPTY_PRODUCT_FORM, category_id: '1', name: 'Galaxy S24', price: '22990000', stock: '5' };
 
@@ -36,6 +36,30 @@ describe('validateProductForm', () => {
     test('slug sai định dạng bị từ chối', () => {
         expect(validateProductForm({ ...valid, slug: 'Sai Slug' }).slug).toBeDefined();
         expect(validateProductForm({ ...valid, slug: 'galaxy-s24' }).slug).toBeUndefined();
+    });
+});
+
+describe('đường dẫn ảnh', () => {
+    test('chấp nhận đường dẫn tương đối và địa chỉ http, https', () => {
+        expect(isValidImagePath('/images/products/galaxy-s24.webp')).toBe(true);
+        expect(isValidImagePath('/images/products/Realme-12-Pro+-256GB.webp')).toBe(true);
+        expect(isValidImagePath('https://example.com/a.jpg')).toBe(true);
+        expect(isValidImagePath('http://localhost:3001/images/a.png')).toBe(true);
+    });
+
+    test('từ chối đường dẫn sai', () => {
+        expect(isValidImagePath('')).toBe(false);
+        expect(isValidImagePath('images/a.png')).toBe(false);
+        expect(isValidImagePath('//evil.com/a.png')).toBe(false);
+        expect(isValidImagePath('/images/co khoang trang.png')).toBe(false);
+        expect(isValidImagePath('javascript:alert(1)')).toBe(false);
+        expect(isValidImagePath('ftp://example.com/a.png')).toBe(false);
+    });
+
+    test('form báo lỗi khi đường dẫn ảnh sai, bỏ trống thì hợp lệ', () => {
+        expect(validateProductForm({ ...valid, image_url: 'anh.png' }).image_url).toBeDefined();
+        expect(validateProductForm({ ...valid, image_url: '/images/products/a.webp' }).image_url).toBeUndefined();
+        expect(validateProductForm({ ...valid, image_url: '' }).image_url).toBeUndefined();
     });
 });
 
