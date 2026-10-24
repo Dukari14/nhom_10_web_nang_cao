@@ -14,8 +14,8 @@ import { Payment } from '../payments/payment.entity';
 
 export enum OrderStatus {
   PENDING = 'pending',
-  PROCESSING = 'processing',
-  SHIPPED = 'shipped',
+  CONFIRMED = 'confirmed',
+  SHIPPING = 'shipping',
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled',
 }
@@ -30,6 +30,12 @@ export class Order {
 
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
+
+  @Column({ type: 'varchar', length: 255 })
+  shipping_address: string;
+
+  @Column({ type: 'varchar', length: 20 })
+  phone: string;
 
   @CreateDateColumn()
   created_at: Date;

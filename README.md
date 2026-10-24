@@ -95,6 +95,22 @@ Tài liệu API (Swagger): http://localhost:3000/api/docs
 | PATCH | `/api/products/:id` | Admin | Sửa sản phẩm |
 | DELETE | `/api/products/:id` | Admin | Xóa sản phẩm |
 
+## API giỏ hàng và đơn hàng
+
+Tất cả endpoint dưới đây yêu cầu đăng nhập và chỉ truy cập được dữ liệu của chính người dùng đó. Tiền trả về dạng số, tính theo giá khuyến mãi nếu có, không thì giá gốc.
+
+| Method | Đường dẫn | Mô tả |
+| --- | --- | --- |
+| GET | `/api/cart` | Xem giỏ hàng và tổng tiền |
+| POST | `/api/cart/items` | Thêm sản phẩm (`productId`, `quantity`), không vượt tồn kho |
+| PATCH | `/api/cart/items/:id` | Đổi số lượng |
+| DELETE | `/api/cart/items/:id` | Xóa một dòng khỏi giỏ |
+| POST | `/api/orders` | Đặt hàng từ giỏ (`shipping_address`, `phone`, `payment_method` = `COD` hoặc `BANK_TRANSFER`) |
+| GET | `/api/orders` | Lịch sử đơn của tôi |
+| GET | `/api/orders/:id` | Chi tiết đơn và trạng thái: `pending`, `confirmed`, `shipping`, `delivered`, `cancelled` (403 nếu không phải đơn của mình) |
+
+Đặt hàng chạy trong một transaction: tạo đơn, lưu giá từng sản phẩm tại thời điểm đặt, trừ tồn kho, ghi nhận thanh toán và xóa giỏ. Lỗi ở bước nào thì hoàn tác toàn bộ.
+
 ## Dữ liệu mẫu
 
 Sau khi chạy backend một lần (để tạo bảng), chạy lệnh sau để thêm 20 điện thoại, 6 danh mục và một tài khoản admin. Chạy lại nhiều lần vẫn an toàn.

@@ -11,6 +11,7 @@ import { Order } from '../orders/order.entity';
 
 export enum PaymentMethod {
   COD = 'COD',
+  BANK_TRANSFER = 'BANK_TRANSFER',
 }
 
 export enum PaymentStatus {
@@ -27,7 +28,7 @@ export class Payment {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: string;
 
-  // Hiện chỉ hỗ trợ thanh toán khi nhận hàng
+  // COD: thanh toán khi nhận hàng, BANK_TRANSFER: chuyển khoản
   @Column({ type: 'enum', enum: PaymentMethod, default: PaymentMethod.COD })
   payment_method: PaymentMethod;
 
