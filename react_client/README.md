@@ -1,70 +1,66 @@
-# Getting Started with Create React App
+# Giao diện web bán điện thoại (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Phần giao diện của dự án Nhóm 10, Đại học Phenikaa. Viết bằng React và react-bootstrap, gọi API của backend NestJS ở thư mục gốc của repo.
 
-## Available Scripts
+## Các trang hiện có
 
-In the project directory, you can run:
+| Đường dẫn | Nội dung |
+| --- | --- |
+| `/` | Trang chủ: ô tìm kiếm lớn, danh sách điện thoại mới nhất |
+| `/products` | Danh sách sản phẩm: tìm kiếm, bộ lọc giá, dung lượng, màu, hãng, phân trang |
+| `/products/:id` | Chi tiết sản phẩm và cấu hình |
+| `/login`, `/register` | Đăng nhập và đăng ký |
+| `/cart`, `/admin` | Trang tạm, sẽ làm ở bước sau |
 
-### `npm start`
+Bộ lọc ở trang danh sách nằm trên đường dẫn (ví dụ `/products?search=samsung&color=Đen&page=2`), nên tải lại trang hoặc gửi link vẫn giữ nguyên kết quả.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Yêu cầu
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js 20 trở lên
+- Backend đang chạy tại `http://localhost:3000` (xem [README ở thư mục gốc](../README.md))
 
-### `npm test`
+## Cài đặt và chạy
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+cp .env.example .env
+npm start
+```
 
-### `npm run build`
+Mở http://localhost:3001.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Biến môi trường
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Khai báo trong file `.env` (file này không đưa lên Git, mẫu ở `.env.example`):
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Biến | Ý nghĩa | Giá trị mẫu |
+| --- | --- | --- |
+| `PORT` | Cổng chạy giao diện (backend chỉ cho phép CORS từ cổng này) | `3001` |
+| `REACT_APP_API_URL` | Địa chỉ API của backend | `http://localhost:3000/api` |
 
-### `npm run eject`
+Đổi `.env` thì phải dừng và chạy lại `npm start`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Đăng nhập hoạt động thế nào
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Backend lưu JWT trong cookie `httpOnly`, trình duyệt tự gửi kèm mỗi request (`withCredentials`). Ứng dụng không lưu token, mật khẩu hay thông tin người dùng vào `localStorage`. Mỗi lần tải trang, ứng dụng gọi `GET /auth/me` để biết phiên còn hiệu lực không.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Nếu bạn mở giao diện bằng địa chỉ khác `http://localhost:3001`, hãy sửa `FRONTEND_ORIGIN` trong `.env` của backend cho khớp, nếu không trình duyệt sẽ chặn request.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Cấu trúc thư mục
 
-## Learn More
+```
+src/
+  api.js            axios dùng chung (baseURL, withCredentials)
+  context/          AuthContext: trạng thái đăng nhập
+  components/       thanh điều hướng, chân trang, thẻ sản phẩm, thanh tìm kiếm, phân trang
+  pages/            danh sách, chi tiết, đăng nhập/đăng ký, trang tạm
+  web-users/        trang chủ
+  utils/            định dạng giá, xử lý lỗi, hằng số bộ lọc
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Lệnh khác
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run build     # build bản chạy thật vào thư mục build/
+npm test          # chạy unit test (định dạng giá, tên sản phẩm...)
+```
