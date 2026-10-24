@@ -37,7 +37,7 @@ cd ..
 Tạo database và file cấu hình:
 
 ```sql
-CREATE DATABASE BanHang;
+CREATE DATABASE banhang;
 ```
 
 Sao chép `.env.example` thành `.env` rồi sửa lại cho đúng máy của bạn:
@@ -83,6 +83,28 @@ Tài liệu API (Swagger): http://localhost:3000/api/docs
 | POST | `/api/auth/logout` | Đăng xuất, xóa cookie |
 | GET | `/api/auth/me` | Thông tin người đang đăng nhập |
 
+## API sản phẩm và danh mục
+
+| Method | Đường dẫn | Quyền | Mô tả |
+| --- | --- | --- | --- |
+| GET | `/api/products/latest?limit=8` | Công khai | Điện thoại mới nhất (trang chủ) |
+| GET | `/api/products?search=&brand=&minPrice=&maxPrice=&storage=&color=&page=&limit=` | Công khai | Tìm kiếm, lọc theo giá, dung lượng, màu sắc, có phân trang |
+| GET | `/api/products/:id` | Công khai | Chi tiết và cấu hình, 404 nếu không có |
+| GET | `/api/categories` | Công khai | Danh sách danh mục |
+| POST | `/api/products` | Admin | Thêm sản phẩm |
+| PATCH | `/api/products/:id` | Admin | Sửa sản phẩm |
+| DELETE | `/api/products/:id` | Admin | Xóa sản phẩm |
+
+## Dữ liệu mẫu
+
+Sau khi chạy backend một lần (để tạo bảng), chạy lệnh sau để thêm 20 điện thoại, 6 danh mục và một tài khoản admin. Chạy lại nhiều lần vẫn an toàn.
+
+```bash
+npm run seed
+```
+
+Tài khoản admin mẫu: `admin@phoneshop.vn` / `Admin@12345`. Có thể đổi bằng biến `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` trong `.env` trước khi seed.
+
 ## Chạy kiểm thử
 
 ```bash
@@ -95,12 +117,12 @@ npm run test
 src/
   auth/         đăng ký, đăng nhập, guard, phân quyền
   user/         entity người dùng và hồ sơ
-  categories/   entity danh mục
-  products/     entity sản phẩm
+  categories/   danh mục
+  products/     sản phẩm: tìm kiếm, lọc, quản lý (admin)
   cart/         entity giỏ hàng
   orders/       entity đơn hàng
   payments/     entity thanh toán
-  database/     kết nối MySQL
+  database/     kết nối MySQL và seed.ts (dữ liệu mẫu)
   common/       bộ lọc lỗi dùng chung
 test/           unit test
 react_client/   giao diện React

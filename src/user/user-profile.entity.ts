@@ -42,7 +42,7 @@ export class UserProfile {
   updated_at: Date;
 
   // Xóa user thì xóa luôn profile
-  @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.profile, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

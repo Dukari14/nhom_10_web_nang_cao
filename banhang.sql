@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    user_id VARCHAR(36) DEFAULT (UUID()), -- Hoặc dùng VARCHAR(36) DEFAULT (UUID()) nếu thích UUID
+    user_id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()), -- Khóa chính dạng UUID
     email VARCHAR(100) NOT NULL UNIQUE,     -- Email dùng để đăng nhập, phải là duy nhất
     password_hash VARCHAR(255) NOT NULL,    -- Lưu mật khẩu ĐÃ HÃM (Bcrypt/Argon2), TUYỆT ĐỐI KHÔNG LƯU PLAIN TEXT
     role ENUM('admin', 'customer') NOT NULL DEFAULT 'customer',
@@ -43,11 +43,16 @@ CREATE TABLE products (
     name VARCHAR(255) NOT NULL,            -- Tên sản phẩm (vd: Xiaomi 14 Pro)
     slug VARCHAR(255) NOT NULL UNIQUE,
     description TEXT DEFAULT NULL,
+    brand VARCHAR(100) DEFAULT NULL,       -- Thương hiệu (vd: Samsung, Apple)
+    ram VARCHAR(20) DEFAULT NULL,          -- RAM (vd: 8GB)
+    storage VARCHAR(20) DEFAULT NULL,      -- Dung lượng bộ nhớ trong (vd: 256GB)
+    color VARCHAR(50) DEFAULT NULL,        -- Màu sắc
+    config_description TEXT DEFAULT NULL,  -- Mô tả cấu hình chi tiết (màn hình, chip, camera, pin...)
     price DECIMAL(10, 2) NOT NULL,
     sale_price DECIMAL(10, 2) DEFAULT NULL,
     stock INT NOT NULL DEFAULT 0,
     image_url VARCHAR(255) DEFAULT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
@@ -93,7 +98,7 @@ CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,          -- Khóa ngoại liên kết với bảng users
     total_amount DECIMAL(10, 2) NOT NULL,
-    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
@@ -148,7 +153,7 @@ CREATE TABLE payments (
     order_id INT NOT NULL,                 -- Khóa ngoại liên kết với bảng orders
     amount DECIMAL(10, 2) NOT NULL,
     payment_method ENUM('COD') NOT NULL DEFAULT 'COD', -- Chỉ hỗ trợ COD cho hiện tại
-    status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
+    status ENUM('pending', 'completed', 'failed') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     

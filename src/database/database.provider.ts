@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from '../user/user.entity';
 import { UserProfile } from '../user/user-profile.entity';
 import { Category } from '../categories/category.entity';
@@ -10,32 +10,31 @@ import { Order } from '../orders/order.entity';
 import { OrderItem } from '../orders/order-item.entity';
 import { Payment } from '../payments/payment.entity';
 
+// Tách riêng để script seed dùng chung cấu hình kết nối với ứng dụng
+export const dataSourceOptions: DataSourceOptions = {
+  type: 'mysql',
+  host: process.env.DB_HOST ?? 'localhost',
+  port: Number(process.env.DB_PORT ?? 3306),
+  username: process.env.DB_USERNAME ?? 'root',
+  password: process.env.DB_PASSWORD ?? '',
+  database: process.env.DB_NAME ?? 'banhang',
+  entities: [
+    User,
+    UserProfile,
+    Category,
+    Product,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    Payment,
+  ],
+  synchronize: true,
+};
+
 export const databaseProviders = [
   {
     provide: 'DATA_SOURCE',
-    useFactory: async () => {
-      const dataSource = new DataSource({
-        type: 'mysql',
-        host: process.env.DB_HOST ?? 'localhost',
-        port: Number(process.env.DB_PORT ?? 3306),
-        username: process.env.DB_USERNAME ?? 'root',
-        password: process.env.DB_PASSWORD ?? '',
-        database: process.env.DB_NAME ?? 'BanHang',
-        entities: [
-          User,
-          UserProfile,
-          Category,
-          Product,
-          Cart,
-          CartItem,
-          Order,
-          OrderItem,
-          Payment,
-        ],
-        synchronize: true,
-      });
-
-      return dataSource.initialize();
-    },
+    useFactory: async () => new DataSource(dataSourceOptions).initialize(),
   },
 ];
