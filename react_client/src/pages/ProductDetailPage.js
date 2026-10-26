@@ -1,0 +1,258 @@
+import { useEffect, useState } from 'react';
+import { Alert, Breadcrumb, Button, Col, Container, Form, Row, Spinner, Table } from 'react-bootstrap';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import api from '../api';
+import ErrorAlert from '../components/ErrorAlert';
+import ProductImage from '../components/ProductImage';
+import StatusBadge from '../components/StatusBadge';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { getErrorMessages, isCanceled } from '../utils/errors';
+import { formatPrice, getDisplayName, getPriceInfo } from '../utils/format';
+import useDocumentTitle from '../utils/useDocumentTitle';
+
+// config_description do admin nhập, các mục cách nhau bằng dấu ";"
+// Ví dụ: "Màn hình 6.2 inch; Chip Exynos 2400; Camera sau 50MP; Pin 4000 mAh"
+const CONFIG_LABELS = ['Màn hình', 'Chip', 'Camera sau', 'Camera trước', 'Camera', 'Pin', 'Hệ điều hành'];
+
+function parseConfig(text) {
+    if (!text) return [];
+    return text
+        .split(/[;\n]/)
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((part) => {
+            const label = CONFIG_LABELS.find((item) => part.toLowerCase().startsWith(`${item.toLowerCase()} `));
+            if (label) return { label, value: part.slice(label.length).trim() };
+            const colon = part.indexOf(':');
+            if (colon > 0) return { label: part.slice(0, colon).trim(), value: part.slice(colon + 1).trim() };
+            return { label: 'Khác', value: part };
+        });
+}
+
+export default function ProductDetailPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useAuth();
+    const { addItem } = useCart();
+
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [errors, setErrors] = useState([]);
+    const [quantity, setQuantity] = useState(1);
+    const [notice, setNotice] = useState('');
+    const [adding, setAdding] = useState(false);
+    const [addErrors, setAddErrors] = useState([]);
+
+    useDocumentTitle(product ? getDisplayName(product) : 'Chi tiết sản phẩm');
+
+    useEffect(() => {
+        const controller = new AbortController();
+        setLoading(true);
+        setErrors([]);
+        setNotice('');
+        setAddErrors([]);
+        setQuantity(1);
+        api.get(`/products/${id}`, { signal: controller.signal })
+            .then((response) => {
+                setProduct(response.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                if (isCanceled(error)) return;
+                setProduct(null);
+                setErrors(getErrorMessages(error));
+                setLoading(false);
+            });
+        return () => controller.abort();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <Container className="text-center py-5">
+                <Spinner animation="border" role="status" variant="primary">
+                    <span className="visually-hidden">Đang tải sản phẩm...</span>
+                </Spinner>
+            </Container>
+        );
+    }
+
+    if (!product) {
+        return (
+            <Container className="py-4">
+                <ErrorAlert messages={errors} />
+                <Button as={Link} to="/products" variant="outline-primary">
+                    Về danh sách điện thoại
+                </Button>
+            </Container>
+        );
+    }
+
+    const price = getPriceInfo(product);
+    const soldOut = product.stock <= 0;
+    const maxQuantity = Math.max(1, product.stock);
+    const configRows = parseConfig(product.config_description);
+
+    const changeQuantity = (value) => {
+        const number = Math.floor(Number(value));
+        if (Number.isNaN(number)) return;
+        setQuantity(Math.min(maxQuantity, Math.max(1, number)));
+    };
+
+    // Chưa đăng nhập thì chuyển sang đăng nhập rồi quay lại trang này; "Mua ngay" thêm vào giỏ rồi sang thanh toán
+    const handleAddToCart = async (goToCheckout = false) => {
+        if (!user) {
+            navigate('/login', { state: { from: location.pathname } });
+            return;
+        }
+        setAdding(true);
+        setNotice('');
+        setAddErrors([]);
+        try {
+            await addItem(product.product_id, quantity);
+            if (goToCheckout) {
+                navigate('/checkout');
+                return;
+            }
+            setNotice(`Đã thêm ${quantity} sản phẩm vào giỏ hàng.`);
+        } catch (error) {
+            setAddErrors(getErrorMessages(error));
+        } finally {
+            setAdding(false);
+        }
+    };
+
+    return (
+        <Container className="py-4">
+            <Breadcrumb listProps={{ className: 'small' }}>
+                <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/' }}>
+                    Trang chủ
+                </Breadcrumb.Item>
+                <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/products' }}>
+                    Điện thoại
+                </Breadcrumb.Item>
+                {product.brand && (
+                    <Breadcrumb.Item linkAs={Link} linkProps={{ to: `/products?brand=${encodeURIComponent(product.brand)}` }}>
+                        {product.brand}
+                    </Breadcrumb.Item>
+                )}
+                <Breadcrumb.Item active>{getDisplayName(product)}</Breadcrumb.Item>
+            </Breadcrumb>
+
+            <Row className="g-4">
+                <Col md={6}>
+                    <ProductImage product={product} size="lg" />
+                </Col>
+
+                <Col md={6} className="d-flex flex-column gap-3">
+                    <h1 className="fs-3 fw-bold mb-0">{getDisplayName(product)}</h1>
+                    <div className="d-flex flex-wrap align-items-center gap-3 text-secondary">
+                        {product.brand && <span>Thương hiệu: {product.brand}</span>}
+                        {soldOut ? <StatusBadge tone="dark">Hết hàng</StatusBadge> : <span>Còn hàng ({product.stock})</span>}
+                    </div>
+
+                    <div className="d-flex flex-wrap align-items-center gap-2">
+                        <span className={`price-current price-large ${price.hasDiscount ? 'is-sale' : ''}`}>
+                            {formatPrice(price.current)}
+                        </span>
+                        {price.hasDiscount && (
+                            <>
+                                <span className="price-original price-original-large">{formatPrice(price.original)}</span>
+                                <span className="discount-tag">-{price.discountPercent}%</span>
+                            </>
+                        )}
+                    </div>
+
+                    {product.storage && (
+                        <div>
+                            <h2 className="fs-6 fw-bold">Dung lượng</h2>
+                            <span className="spec-chip">{product.storage}</span>
+                        </div>
+                    )}
+                    {product.color && (
+                        <div>
+                            <h2 className="fs-6 fw-bold">Màu sắc</h2>
+                            <span className="spec-chip">{product.color}</span>
+                        </div>
+                    )}
+
+                    <Form.Group controlId="quantity" className="d-flex align-items-center gap-3">
+                        <Form.Label className="fw-bold mb-0">Số lượng</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={1}
+                            max={maxQuantity}
+                            value={quantity}
+                            disabled={soldOut}
+                            style={{ width: 90 }}
+                            onChange={(event) => changeQuantity(event.target.value)}
+                        />
+                    </Form.Group>
+
+                    <div className="d-flex flex-column flex-sm-row gap-2">
+                        <Button variant="primary" size="lg" className="flex-grow-1" disabled={soldOut || adding} onClick={() => handleAddToCart(false)}>
+                            {adding && <Spinner size="sm" animation="border" role="status" aria-label="Đang thêm vào giỏ" />}
+                            Thêm vào giỏ hàng
+                        </Button>
+                        <Button variant="outline-primary" size="lg" className="flex-grow-1" disabled={soldOut || adding} onClick={() => handleAddToCart(true)}>
+                            {adding && <Spinner size="sm" animation="border" role="status" aria-label="Đang xử lý" />}
+                            Mua ngay
+                        </Button>
+                    </div>
+
+                    <ErrorAlert messages={addErrors} onClose={() => setAddErrors([])} className="mb-0" />
+                    {notice && (
+                        <Alert variant="success" dismissible onClose={() => setNotice('')} className="mb-0">
+                            {notice}{' '}
+                            <Alert.Link as={Link} to="/cart">
+                                Xem giỏ hàng
+                            </Alert.Link>
+                        </Alert>
+                    )}
+                </Col>
+            </Row>
+
+            <section className="mt-4" aria-labelledby="config-title">
+                <h2 id="config-title" className="fs-5 fw-bold">
+                    Cấu hình chi tiết
+                </h2>
+                <Table responsive className="spec-table">
+                    <tbody>
+                        {product.brand && (
+                            <tr>
+                                <th scope="row">Hãng</th>
+                                <td>{product.brand}</td>
+                            </tr>
+                        )}
+                        {product.ram && (
+                            <tr>
+                                <th scope="row">RAM</th>
+                                <td>{product.ram}</td>
+                            </tr>
+                        )}
+                        {product.storage && (
+                            <tr>
+                                <th scope="row">Bộ nhớ trong</th>
+                                <td>{product.storage}</td>
+                            </tr>
+                        )}
+                        {product.color && (
+                            <tr>
+                                <th scope="row">Màu sắc</th>
+                                <td>{product.color}</td>
+                            </tr>
+                        )}
+                        {configRows.map((row, index) => (
+                            <tr key={`${row.label}-${index}`}>
+                                <th scope="row">{row.label}</th>
+                                <td>{row.value}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+                {product.description && <p className="text-secondary">{product.description}</p>}
+            </section>
+        </Container>
+    );
+}

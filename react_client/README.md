@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# Giao diện web bán điện thoại (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Phần giao diện của dự án Nhóm 10, Đại học Phenikaa. Viết bằng React và react-bootstrap, gọi API của backend NestJS ở thư mục gốc của repo.
 
-## Available Scripts
+## Các trang hiện có
 
-In the project directory, you can run:
+| Đường dẫn | Nội dung |
+| --- | --- |
+| `/` | Trang chủ: ô tìm kiếm lớn, danh sách điện thoại mới nhất |
+| `/products` | Danh sách sản phẩm: tìm kiếm, bộ lọc giá, dung lượng, màu, hãng, phân trang |
+| `/products/:id` | Chi tiết sản phẩm và cấu hình |
+| `/login`, `/register` | Đăng nhập và đăng ký |
+| `/cart` | Giỏ hàng: đổi số lượng, xóa, tổng tiền (cần đăng nhập) |
+| `/checkout` | Thanh toán: địa chỉ, số điện thoại, COD hoặc chuyển khoản (cần đăng nhập) |
+| `/orders` | Lịch sử đơn hàng, lọc theo trạng thái (cần đăng nhập) |
+| `/orders/:id` | Chi tiết đơn: sản phẩm, trạng thái, thanh toán, địa chỉ (cần đăng nhập) |
+| `/admin` | Tổng quan: doanh thu, số máy bán ra, số đơn, biểu đồ cột, top 5 bán chạy (chỉ admin) |
+| `/admin/products` | Quản lý sản phẩm: tìm kiếm, thêm, sửa, xóa có hộp xác nhận (chỉ admin) |
+| `/admin/orders` | Quản lý đơn hàng: lọc theo trạng thái, đổi trạng thái, xem chi tiết (chỉ admin) |
+| `/admin/users` | Quản lý tài khoản: tìm kiếm, đổi vai trò, khóa/mở khóa (chỉ admin) |
 
-### `npm start`
+Khu quản trị có khung riêng với thanh bên xanh đậm. Chưa đăng nhập thì chuyển sang `/login`; đã đăng nhập nhưng không phải admin thì về trang chủ. Dù vậy mọi quyền vẫn do backend kiểm tra ở từng API.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Các trang cần đăng nhập sẽ chuyển sang `/login` nếu chưa đăng nhập và quay lại đúng trang đó sau khi đăng nhập xong. Thông tin chuyển khoản ở trang thanh toán chỉ là dữ liệu minh họa.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Bộ lọc ở trang danh sách nằm trên đường dẫn (ví dụ `/products?search=samsung&color=Đen&page=2`), nên tải lại trang hoặc gửi link vẫn giữ nguyên kết quả.
 
-### `npm test`
+## Yêu cầu
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js 20 trở lên
+- Backend đang chạy tại `http://localhost:3000` (xem [README ở thư mục gốc](../README.md))
 
-### `npm run build`
+## Cài đặt và chạy
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+cp .env.example .env
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Mở http://localhost:3001.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Biến môi trường
 
-### `npm run eject`
+Khai báo trong file `.env` (file này không đưa lên Git, mẫu ở `.env.example`):
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Biến | Ý nghĩa | Giá trị mẫu |
+| --- | --- | --- |
+| `PORT` | Cổng chạy giao diện (backend chỉ cho phép CORS từ cổng này) | `3001` |
+| `REACT_APP_API_URL` | Địa chỉ API của backend | `http://localhost:3000/api` |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Đổi `.env` thì phải dừng và chạy lại `npm start`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Đăng nhập hoạt động thế nào
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Backend lưu JWT trong cookie `httpOnly`, trình duyệt tự gửi kèm mỗi request (`withCredentials`). Ứng dụng không lưu token, mật khẩu hay thông tin người dùng vào `localStorage`. Mỗi lần tải trang, ứng dụng gọi `GET /auth/me` để biết phiên còn hiệu lực không.
 
-## Learn More
+Nếu bạn mở giao diện bằng địa chỉ khác `http://localhost:3001`, hãy sửa `FRONTEND_ORIGIN` trong `.env` của backend cho khớp, nếu không trình duyệt sẽ chặn request.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Cấu trúc thư mục
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+src/
+  api.js            axios dùng chung (baseURL, withCredentials)
+  context/          AuthContext (đăng nhập), CartContext (giỏ hàng, số lượng trên thanh điều hướng)
+  components/       thanh điều hướng, chân trang, thẻ sản phẩm, thanh tìm kiếm, phân trang
+  pages/            danh sách, chi tiết, đăng nhập/đăng ký, giỏ hàng, thanh toán, đơn hàng
+  pages/admin/      4 trang quản trị (tổng quan, sản phẩm, đơn hàng, người dùng)
+  components/admin/ khung quản trị, hộp xác nhận, biểu đồ cột, form sản phẩm
+  web-users/        trang chủ
+  utils/            định dạng giá, xử lý lỗi, hằng số bộ lọc
+```
 
-### Code Splitting
+## Lệnh khác
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run build     # build bản chạy thật vào thư mục build/
+npm test          # chạy unit test (định dạng giá, tên sản phẩm...)
+```
