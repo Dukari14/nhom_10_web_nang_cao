@@ -108,7 +108,7 @@ function LoginForm({ attemptRef }) {
                         value={values.email}
                         onChange={set('email')}
                         error={fieldErrors.email}
-                        placeholder="email@vidu.com"
+                        placeholder="email@example.com"
                         autoComplete="email"
                         autoFocus
                     />
@@ -189,7 +189,7 @@ function RegisterForm({ attemptRef }) {
                         value={values.email}
                         onChange={set('email')}
                         error={fieldErrors.email}
-                        placeholder="email@vidu.com"
+                        placeholder="email@example.com"
                         autoComplete="email"
                     />
                     <Field
