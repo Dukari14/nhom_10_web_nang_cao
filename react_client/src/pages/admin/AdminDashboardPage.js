@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
         : [];
 
     return (
-        <>
+        <div className="d-flex flex-column gap-3 vh-100 overflow-hidden">
             <div className="d-flex flex-wrap align-items-end gap-3 mb-3">
                 <h1 className="fs-3 fw-bold mb-0 me-auto">Thống kê kinh doanh</h1>
                 <Form.Group controlId="stats-from">
@@ -150,6 +150,6 @@ export default function AdminDashboardPage() {
                     </Card>
                 </div>
             )}
-        </>
+        </div>
     );
 }
