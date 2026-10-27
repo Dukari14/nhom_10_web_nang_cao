@@ -316,14 +316,12 @@ Lệnh `npm run test:e2e` ở thư mục gốc chưa dùng được: file `test/
 
 Nguồn ảnh: xem bảng trong báo cáo.
 
-## 12. Thành viên và đóng góp
+## 12. Thành viên trong nhóm
 
-| Họ tên | MSSV | Phần việc |
-| --- | --- | --- |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Họ tên | MSSV |
+| Đỗ Việt Dũng | 23010547 |
+| Đỗ Bảo Long | 23010561 |
+| Phạm Tiến Chiêu | 23010526 |
 
 ## 13. Giới hạn đã biết và hướng phát triển
 
