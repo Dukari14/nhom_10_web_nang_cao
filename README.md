@@ -319,7 +319,7 @@ Nguồn ảnh: xem bảng trong báo cáo.
 ## 12. Thành viên trong nhóm
 
 | Họ tên | MSSV |
-| --- | --- | --- |
+| --- | --- |
 | Đỗ Việt Dũng | 23010547 |
 | Đỗ Bảo Long | 23010561 |
 | Phạm Tiến Chiêu | 23010526 |
